@@ -2,9 +2,9 @@ parameters:
     database_driver:   pdo_mysql
     database_host:     localhost
     database_port:     3306
-    database_name:     symfony
+    database_name:     com_us_ipt_training
     database_user:     root
-    database_password: 324dm1n
+    database_password: cnasty328
 
     mailer_transport:  smtp
     mailer_host:       127.0.0.1
