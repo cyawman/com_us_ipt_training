@@ -1,0 +1,42 @@
+management:
+    pattern: /
+    defaults: { _controller: YawmanTrainingBundle:Management:index }
+
+management_company_edit:
+    pattern: /company-edit
+    defaults: { _controller: YawmanTrainingBundle:Management:companyEdit }
+
+management_company_update:
+    pattern: /company-update
+    defaults: { _controller: YawmanTrainingBundle:Management:companyUpdate }    
+    
+management_user:
+    pattern:  /user
+    defaults: { _controller: "YawmanTrainingBundle:Management:userList" }
+
+management_user_show:
+    pattern:  /user/{id}/show
+    defaults: { _controller: "YawmanTrainingBundle:Management:userShow" }
+
+management_user_new:
+    pattern:  /user/new
+    defaults: { _controller: "YawmanTrainingBundle:Management:userNew" }
+
+management_user_create:
+    pattern:  /user/create
+    defaults: { _controller: "YawmanTrainingBundle:Management:userCreate" }
+    requirements: { _method: post }
+
+management_user_edit:
+    pattern:  /user/{id}/edit
+    defaults: { _controller: "YawmanTrainingBundle:Management:userEdit" }
+
+management_user_update:
+    pattern:  /user/{id}/update
+    defaults: { _controller: "YawmanTrainingBundle:Management:userUpdate" }
+    requirements: { _method: post }
+
+management_user_delete:
+    pattern:  /user/{id}/delete
+    defaults: { _controller: "YawmanTrainingBundle:Management:userDelete" }
+    requirements: { _method: post }

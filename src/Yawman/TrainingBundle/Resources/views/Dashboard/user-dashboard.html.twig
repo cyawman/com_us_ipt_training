@@ -1,0 +1,30 @@
+{% extends "::user.html.twig" %}
+
+{% block title %}User Dashboard{% endblock %}
+
+{% block content %}
+<h1>My Lesson Plans</h1>
+{% for plan in userLessons %}
+   <h2>{{ plan.name|upper }}</h2>
+   <table>
+       <thead>
+           <tr>
+               <th>Name</th>
+               <th>Description</th>
+               <th>Status</th>
+           </tr>
+       </thead>
+       <tbody>
+            {% for lesson in plan.lessons %}
+               <tr>
+                   <td>{{ lesson.name }}</td>
+                   <td></td>
+                   <td>{{ lesson.status }}</td>
+               </tr>
+            {% endfor %}
+       </tbody>
+   </table>
+   
+{% endfor %}
+{% endblock %}
+

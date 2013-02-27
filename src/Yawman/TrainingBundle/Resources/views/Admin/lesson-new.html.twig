@@ -1,0 +1,23 @@
+{% extends "::admin.html.twig" %}
+
+
+{% block title %}Lesson Creation{% endblock %}
+
+{% block content %}
+<h1>Lesson creation</h1>
+
+<form action="{{ path('admin_lesson_create') }}" method="post" {{ form_enctype(form) }}>
+    {{ form_widget(form) }}
+    <p>
+        <button type="submit">Create</button>
+    </p>
+</form>
+
+<ul class="record_actions">
+    <li>
+        <a href="{{ path('admin_lesson') }}">
+            Back to the list
+        </a>
+    </li>
+</ul>
+{% endblock %}

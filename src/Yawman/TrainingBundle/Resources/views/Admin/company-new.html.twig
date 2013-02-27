@@ -1,0 +1,16 @@
+{% extends "::admin.html.twig" %}
+
+{% block title %}Company Creation{% endblock %}
+
+{% block content %}
+<h1>Create Company</h1>
+
+<form action="{{ path('admin_company_create') }}" method="post" {{ form_enctype(form) }}>
+    {{ form_widget(form) }}
+    <p>
+        <button class="btn btn-primary" type="submit">Create</button>
+    </p>
+</form>
+
+<a href="{{ path('admin_company') }}">Back to the list</a>
+{% endblock %}

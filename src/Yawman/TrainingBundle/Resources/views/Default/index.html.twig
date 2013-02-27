@@ -1,0 +1,14 @@
+{% set layout = "::user.html.twig" %}
+{% if is_granted('ROLE_ADMIN') %}
+    {% set layout = "::admin.html.twig" %}
+{% elseif is_granted('ROLE_MANAGER') %}
+    {% set layout = "::management.html.twig" %}
+{% endif %}
+{% extends layout %}
+
+{% block title %}Yawman Bundle{% endblock %}
+
+{% block content %}
+<h1>Homepage</h1>
+<p>This is pretty cool.</p>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% set layout = "::user.html.twig" %}
+{% if is_granted('ROLE_ADMIN') %}
+    {% set layout = "::admin.html.twig" %}
+{% elseif is_granted('ROLE_MANAGER') %}
+    {% set layout = "::management.html.twig" %}
+{% endif %}
+{% extends layout %}
+
+{% block title %}User Edit{% endblock %}
+
+{% block content %}
+<h1>User edit</h1>
+
+<form action="{{ path('admin_user_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
+    {{ form_widget(edit_form) }}
+    <p>
+        <button type="submit">Edit</button>
+    </p>
+</form>
+{% endblock %}

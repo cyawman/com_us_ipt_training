@@ -1,0 +1,24 @@
+yawman_training_homepage:
+    pattern:  /
+    defaults: { _controller: YawmanTrainingBundle:Default:index }
+    
+yawman_training_registration:
+    pattern:  /registration
+    defaults: { _controller: YawmanTrainingBundle:Default:registration }
+
+yawman_training_register:
+    pattern:  /register
+    defaults: { _controller: YawmanTrainingBundle:Default:register }
+    requirements: { _method: post }
+
+YawmanTrainingBundle_dashboard:
+        resource: "@YawmanTrainingBundle/Resources/config/routing/dashboard.yml"
+        prefix:   /dashboard
+
+YawmanTrainingBundle_management:
+        resource: "@YawmanTrainingBundle/Resources/config/routing/management.yml"
+        prefix:   /management
+    
+YawmanTrainingBundle_admin:
+        resource: "@YawmanTrainingBundle/Resources/config/routing/admin.yml"
+        prefix:   /admin

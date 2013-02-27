@@ -1,0 +1,7 @@
+parameters:
+#    yawman_training.example.class: Yawman\TrainingBundle\Example
+
+services:
+#    yawman_training.example:
+#        class: %yawman_training.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

@@ -1,0 +1,12 @@
+{% extends "::default.html.twig" %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<h1>New User Registration</h1>
+<form action="{{ path('yawman_training_register')}}" method="post" {{ form_enctype(form) }}>
+    {{ form_widget(form) }}
+    <input class="btn btn-primary" type="submit" value="Register" />
+</form>
+{% endblock %}
+
