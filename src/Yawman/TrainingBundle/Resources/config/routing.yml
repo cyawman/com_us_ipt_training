@@ -11,6 +11,15 @@ yawman_training_register:
     defaults: { _controller: YawmanTrainingBundle:Default:register }
     requirements: { _method: post }
 
+yawman_training_change_password:
+    pattern:  /change-password
+    defaults: { _controller: YawmanTrainingBundle:Security:changePassword }
+
+yawman_training_update_change_password:
+    pattern:  /update-password
+    defaults: { _controller: YawmanTrainingBundle:Security:updatePassword }
+    requirements: { _method: post }
+
 YawmanTrainingBundle_dashboard:
         resource: "@YawmanTrainingBundle/Resources/config/routing/dashboard.yml"
         prefix:   /dashboard
