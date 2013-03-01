@@ -7,8 +7,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 
 /**
- *
  * @ORM\Table(name="users")
+ * @ORM\HasLifecycleCallbacks
  * @ORM\Entity(repositoryClass="Yawman\TrainingBundle\Entity\UserRepository")
  */
 class User implements AdvancedUserInterface, \Serializable {
@@ -39,30 +39,45 @@ class User implements AdvancedUserInterface, \Serializable {
      * @ORM\Column(type="string", length=60, unique=true)
      */
     private $email;
-    
+
     /**
      * @ORM\Column(name="is_active", type="boolean")
      */
     private $isActive;
 
     /**
+     * @ORM\Column(name="has_logged_in", type="boolean")
+     */
+    private $hasLoggedIn = false;
+    
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    protected $created_at;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    protected $modified_at;
+
+    /**
      * @ORM\ManyToMany(targetEntity="Group", inversedBy="users")
      *
      */
     private $groups;
-    
+
     /**
      * @ORM\ManyToMany(targetEntity="LessonPlan", inversedBy="users")
      *
      */
     private $lessonplans;
-    
+
     /**
      * @ORM\ManyToOne(targetEntity="Company", inversedBy="users")
      * @ORM\JoinColumn(name="company_id", referencedColumnName="id")
      */
     private $company;
-    
+
     public function __construct() {
         $this->isActive = true;
         $this->salt = md5(uniqid(null, true));
@@ -145,9 +160,8 @@ class User implements AdvancedUserInterface, \Serializable {
     public function isEnabled() {
         return $this->isActive;
     }
-    
-    public function __toString()
-    {
+
+    public function __toString() {
         return sprintf('%s', $this->username);
     }
 
@@ -156,8 +170,7 @@ class User implements AdvancedUserInterface, \Serializable {
      *
      * @return integer 
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -167,10 +180,9 @@ class User implements AdvancedUserInterface, \Serializable {
      * @param string $username
      * @return User
      */
-    public function setUsername($username)
-    {
+    public function setUsername($username) {
         $this->username = $username;
-    
+
         return $this;
     }
 
@@ -180,10 +192,9 @@ class User implements AdvancedUserInterface, \Serializable {
      * @param string $salt
      * @return User
      */
-    public function setSalt($salt)
-    {
+    public function setSalt($salt) {
         $this->salt = $salt;
-    
+
         return $this;
     }
 
@@ -193,10 +204,9 @@ class User implements AdvancedUserInterface, \Serializable {
      * @param string $password
      * @return User
      */
-    public function setPassword($password)
-    {
+    public function setPassword($password) {
         $this->password = $password;
-    
+
         return $this;
     }
 
@@ -206,10 +216,9 @@ class User implements AdvancedUserInterface, \Serializable {
      * @param string $email
      * @return User
      */
-    public function setEmail($email)
-    {
+    public function setEmail($email) {
         $this->email = $email;
-    
+
         return $this;
     }
 
@@ -219,10 +228,9 @@ class User implements AdvancedUserInterface, \Serializable {
      * @param boolean $isActive
      * @return User
      */
-    public function setIsActive($isActive)
-    {
+    public function setIsActive($isActive) {
         $this->isActive = $isActive;
-    
+
         return $this;
     }
 
@@ -231,21 +239,43 @@ class User implements AdvancedUserInterface, \Serializable {
      *
      * @return boolean 
      */
-    public function getIsActive()
-    {
+    public function getIsActive() {
         return $this->isActive;
     }
+    
+    public function getHasLoggedIn() {
+        return $this->hasLoggedIn;
+    }
 
+    public function setHasLoggedIn($hasLoggedIn) {
+        $this->hasLoggedIn = $hasLoggedIn;
+    }
+
+    public function getCreatedAt() {
+        return $this->created_at;
+    }
+
+    public function setCreatedAt($created_at) {
+        $this->created_at = $created_at;
+    }
+
+    public function getModifiedAt() {
+        return $this->modified_at;
+    }
+
+    public function setModifiedAt($modified_at) {
+        $this->modified_at = $modified_at;
+    }
+    
     /**
      * Add groups
      *
      * @param \Yawman\TrainingBundle\Entity\Group $groups
      * @return User
      */
-    public function addGroup(\Yawman\TrainingBundle\Entity\Group $groups)
-    {
+    public function addGroup(\Yawman\TrainingBundle\Entity\Group $groups) {
         $this->groups[] = $groups;
-    
+
         return $this;
     }
 
@@ -254,8 +284,7 @@ class User implements AdvancedUserInterface, \Serializable {
      *
      * @param \Yawman\TrainingBundle\Entity\Group $groups
      */
-    public function removeGroup(\Yawman\TrainingBundle\Entity\Group $groups)
-    {
+    public function removeGroup(\Yawman\TrainingBundle\Entity\Group $groups) {
         $this->groups->removeElement($groups);
     }
 
@@ -264,8 +293,7 @@ class User implements AdvancedUserInterface, \Serializable {
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getGroups()
-    {
+    public function getGroups() {
         return $this->groups;
     }
 
@@ -275,10 +303,9 @@ class User implements AdvancedUserInterface, \Serializable {
      * @param \Yawman\TrainingBundle\Entity\Company $company
      * @return User
      */
-    public function setCompany(\Yawman\TrainingBundle\Entity\Company $company = null)
-    {
+    public function setCompany(\Yawman\TrainingBundle\Entity\Company $company = null) {
         $this->company = $company;
-    
+
         return $this;
     }
 
@@ -287,8 +314,7 @@ class User implements AdvancedUserInterface, \Serializable {
      *
      * @return \Yawman\TrainingBundle\Entity\Company 
      */
-    public function getCompany()
-    {
+    public function getCompany() {
         return $this->company;
     }
 
@@ -298,10 +324,9 @@ class User implements AdvancedUserInterface, \Serializable {
      * @param \Yawman\TrainingBundle\Entity\LessonPlan $lessonplans
      * @return User
      */
-    public function addLessonplan(\Yawman\TrainingBundle\Entity\LessonPlan $lessonplans)
-    {
+    public function addLessonplan(\Yawman\TrainingBundle\Entity\LessonPlan $lessonplans) {
         $this->lessonplans[] = $lessonplans;
-    
+
         return $this;
     }
 
@@ -310,8 +335,7 @@ class User implements AdvancedUserInterface, \Serializable {
      *
      * @param \Yawman\TrainingBundle\Entity\LessonPlan $lessonplans
      */
-    public function removeLessonplan(\Yawman\TrainingBundle\Entity\LessonPlan $lessonplans)
-    {
+    public function removeLessonplan(\Yawman\TrainingBundle\Entity\LessonPlan $lessonplans) {
         $this->plans->removeElement($lessonplans);
     }
 
@@ -320,8 +344,22 @@ class User implements AdvancedUserInterface, \Serializable {
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getLessonplans()
-    {
+    public function getLessonplans() {
         return $this->lessonplans;
     }
+
+    /**
+     * Now we tell doctrine that before we persist or update we call the updatedTimestamps() function.
+     *
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function updateTimestamps() {
+        $this->setModifiedAt(new \DateTime(date('Y-m-d H:i:s')));
+
+        if ($this->getCreatedAt() == null) {
+            $this->setCreatedAt(new \DateTime(date('Y-m-d H:i:s')));
+        }
+    }
+
 }

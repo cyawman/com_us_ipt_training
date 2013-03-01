@@ -9,16 +9,46 @@ use Yawman\TrainingBundle\Form\UserType;
 class DashboardController extends Controller {
 
     public function indexAction() {
+        $em = $this->getDoctrine()->getManager();
+
+        $user = $this->getUser();
+
+        $hasLoggedIn = $user->getHasLoggedIn();
 
         if ($this->get('security.context')->isGranted('ROLE_ADMIN')) {
             $response = $this->forward('YawmanTrainingBundle:Dashboard:adminDashboard');
-        }else if($this->get('security.context')->isGranted('ROLE_MANAGER')){
-            $response = $this->forward('YawmanTrainingBundle:Dashboard:managementDashboard');
-        }else{
-            $response = $this->forward('YawmanTrainingBundle:Dashboard:userDashboard');
+        } else if ($this->get('security.context')->isGranted('ROLE_MANAGER')) {
+            if ($hasLoggedIn) {
+                $response = $this->forward('YawmanTrainingBundle:Dashboard:managementDashboard');
+            } else {
+                $response = $this->forward('YawmanTrainingBundle:Dashboard:managementWelcome');
+            }
+        } else {
+            if ($hasLoggedIn) {
+                $response = $this->forward('YawmanTrainingBundle:Dashboard:userDashboard');
+            } else {
+                $response = $this->forward('YawmanTrainingBundle:Dashboard:userWelcome');
+            }
+        }
+
+        if (!$hasLoggedIn) {
+            $user->setHasLoggedIn(true);
+            $em->persist($user);
+            $em->flush();
         }
 
         return $response;
+    }
+
+    public function userWelcomeAction() {
+        return $this->render('YawmanTrainingBundle:Dashboard:user-welcome.html.twig');
+    }
+
+    public function managementWelcomeAction() {
+        if (false === $this->get('security.context')->isGranted('ROLE_MANAGER')) {
+            throw new AccessDeniedException();
+        }
+        return $this->render('YawmanTrainingBundle:Dashboard:management-welcome.html.twig');
     }
 
     public function userDashboardAction() {
