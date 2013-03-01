@@ -3,41 +3,17 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
+    {% if error %}
+        <div>{{ error.message }}</div>
+    {% endif %}
+     
 
-<div class="row-fluid">
-    <div class="span8">
-        {% if error %}
-            <div>{{ error.message }}</div>
-        {% endif %}
-
-        <form action="{{ path('login_check') }}" method="post">
-            <fieldset>
-                <legend>Login</legend>
-                <label for="username">Username:</label>
-                <input type="text" id="username" name="_username" value="{{ last_username }}" />
-
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="_password" />
-
-                {#
-                    If you want to control the URL the user is redirected to on success (more details below)
-                    <input type="hidden" name="_target_path" value="/account" />
-                #}
-                <br />
-                <button class="btn btn-primary" type="submit">Login</button>
-            </fieldset>
-        </form>
-    </div>
-    <div class="span4">
-        <form action="#" method="get">
-            <fieldset>
-                <legend>New User? Register Now</legend>
-                <p>Register for your own account now. Registration is free!</p>
-                <a href="{{ path('yawman_training_registration') }}" class="btn btn-info">Register Now</a>
-            </fieldset>
-        </form>
-    </div>
-</div>
-
+    <form class="form-signin" action="{{ path('login_check') }}" method="post">
+        <h2>Please Sign In</h2>
+            <input type="text" class="input-block-level" id="username" name="_username" value="{{ last_username }}" placeholder="Username" />
+            <input type="password" class="input-block-level" id="password" name="_password" placeholder="Password" />
+            <br />
+            <button class="btn btn-large btn-primary" type="submit">Sign In</button>
+    </form>
 {% endblock %}
 
