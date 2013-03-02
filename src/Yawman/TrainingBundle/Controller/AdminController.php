@@ -144,9 +144,13 @@ class AdminController extends Controller
             $em->persist($entity);
             $em->flush();
 
+            $this->get('session')->setFlash('success', 'Your update was successful!');
+            
             return $this->redirect($this->generateUrl('admin_company_edit', array('id' => $id)));
         }
 
+        $this->get('session')->setFlash('error', 'The update was unsuccessful.');
+        
         return $this->render('YawmanTrainingBundle:Admin:company-edit.html.twig', array(
             'entity'      => $entity,
             'edit_form'   => $editForm->createView(),

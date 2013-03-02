@@ -7,7 +7,6 @@ use Symfony\Component\Security\Core\SecurityContext;
 use \Symfony\Component\Form\FormError;
 use Yawman\TrainingBundle\Model\ChangePassword;
 use Yawman\TrainingBundle\Form\ChangePasswordType;
-use Yawman\TrainingBundle\Entity\User;
 
 class SecurityController extends Controller {
 
