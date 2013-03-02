@@ -10,6 +10,7 @@
         <tr>
             <th>Username</th>
             <th>Email</th>
+            <th>Company</th>
             <th>Active</th>
             <th>Actions</th>
         </tr>
@@ -19,21 +20,16 @@
         <tr>
             <td><a href="{{ path('admin_user_show', { 'id': entity.id }) }}">{{ entity.username }}</a></td>
             <td>{{ entity.email }}</td>
+            <td>{{ entity.company.name }}</td>
             <td>{{ entity.isActive ? 'Yes':'No' }}</td>
             <td>
-                <ul>
-                    <li>
-                        <a href="{{ path('admin_user_show', { 'id': entity.id }) }}">show</a>
-                    </li>
-                    <li>
-                        <a href="{{ path('admin_user_edit', { 'id': entity.id }) }}">edit</a>
-                    </li>
-                </ul>
+                <a href="{{ path('admin_user_show', { 'id': entity.id }) }}"><i class="icon-eye-open"></i> View</a><br />
+                <a href="{{ path('admin_user_edit', { 'id': entity.id }) }}"><i class="icon-wrench"></i> Edit</a>
             </td>
         </tr>
     {% endfor %}
     </tbody>
 </table>
 
-<a class="btn btn-primary" href="{{ path('admin_user_new') }}">Create User</a>
+<a class="btn btn-primary" href="{{ path('admin_user_new') }}"><i class="icon-user icon-white"></i> Create User</a>
 {% endblock %}
