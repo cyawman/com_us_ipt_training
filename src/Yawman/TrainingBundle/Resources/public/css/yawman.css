@@ -28,3 +28,6 @@ body.default {
     margin-bottom: 15px;
     padding: 7px 9px;
 }
+.table tbody th {
+    width:150px;
+}
