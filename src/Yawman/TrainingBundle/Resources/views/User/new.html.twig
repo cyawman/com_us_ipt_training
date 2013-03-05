@@ -1,0 +1,27 @@
+{% extends "::admin.html.twig" %}
+
+{% block title %}User Creation{% endblock %}
+
+{% block content %}
+<h1>User creation</h1>
+
+<form action="{{ path('user_create') }}" method="post" {{ form_enctype(form) }}>
+    {{ form_errors(form) }}
+
+    {{ form_row(form.email) }}
+    {{ form_row(form.password) }}
+
+    {{ form_rest(form) }}
+    <p>
+        <button class="btn btn-primary" type="submit">Create</button>
+    </p>
+</form>
+
+<ul class="record_actions unstyled">
+    <li>
+        <a href="{{ path('user') }}">
+            Back to the list
+        </a>
+    </li>
+</ul>
+{% endblock %}

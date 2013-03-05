@@ -1,0 +1,41 @@
+{% extends "::admin.html.twig" %}
+
+{% block title %}User Edit{% endblock %}
+
+{% block content %}
+<h1>User edit</h1>
+
+{% if app.session.hasFlash('success') %}
+    <div class="alert alert-success">
+        {{ app.session.flash('success') }}
+    </div>
+{% endif %}
+
+<form action="{{ path('user_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
+    {{ form_errors(edit_form) }}
+
+    {{ form_row(edit_form.email) }}
+
+    {{ form_rest(edit_form) }}
+    <p>
+        <button type="submit">Edit</button>
+    </p>
+</form>
+
+<ul class="record_actions">
+    <li>
+        <a href="{{ path('user') }}">
+            Back to the list
+        </a>
+    </li>
+    <li>
+        <a href="{{ path('user_edit_password', { 'id': entity.id }) }}">Change password</a>
+    </li>
+    <li>
+        <form action="{{ path('user_delete', { 'id': entity.id }) }}" method="post">
+            {{ form_widget(delete_form) }}
+            <button type="submit">Delete</button>
+        </form>
+    </li>
+</ul>
+{% endblock %}

@@ -1,3 +1,23 @@
+dashboard:
+    pattern: /dashboard
+    defaults: { _controller: YawmanTrainingBundle:Dashboard:index }
+    
+YawmanTrainingBundle_user:
+        resource: "@YawmanTrainingBundle/Resources/config/routing/user.yml"
+        prefix:   /
+
+YawmanTrainingBundle_company:
+        resource: "@YawmanTrainingBundle/Resources/config/routing/company.yml"
+        prefix:   /
+
+YawmanTrainingBundle_lesson:
+        resource: "@YawmanTrainingBundle/Resources/config/routing/lesson.yml"
+        prefix:   /
+
+YawmanTrainingBundle_lessonplan:
+        resource: "@YawmanTrainingBundle/Resources/config/routing/lessonplan.yml"
+        prefix:   /
+
 yawman_training_homepage:
     pattern:  /
     defaults: { _controller: YawmanTrainingBundle:Default:index }
@@ -23,11 +43,3 @@ yawman_training_update_change_password:
 YawmanTrainingBundle_dashboard:
         resource: "@YawmanTrainingBundle/Resources/config/routing/dashboard.yml"
         prefix:   /dashboard
-
-YawmanTrainingBundle_management:
-        resource: "@YawmanTrainingBundle/Resources/config/routing/management.yml"
-        prefix:   /management
-    
-YawmanTrainingBundle_admin:
-        resource: "@YawmanTrainingBundle/Resources/config/routing/admin.yml"
-        prefix:   /admin

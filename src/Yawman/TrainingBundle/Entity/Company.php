@@ -30,7 +30,7 @@ class Company
     private $name;
     
     /**
-     * @ORM\OneToMany(targetEntity="User", mappedBy="company")
+     * @ORM\OneToMany(targetEntity="User", mappedBy="company", cascade={"remove"})
      */
     private $users;
 

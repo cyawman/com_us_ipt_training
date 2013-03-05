@@ -43,7 +43,7 @@ class User implements AdvancedUserInterface, \Serializable {
     /**
      * @ORM\Column(name="is_active", type="boolean")
      */
-    private $isActive;
+    private $isActive = true;
 
     /**
      * @ORM\Column(name="has_logged_in", type="boolean")
@@ -361,5 +361,5 @@ class User implements AdvancedUserInterface, \Serializable {
             $this->setCreatedAt(new \DateTime(date('Y-m-d H:i:s')));
         }
     }
-
+    
 }

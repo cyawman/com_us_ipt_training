@@ -1,0 +1,30 @@
+lessonplan:
+    pattern:  /lesson-plan
+    defaults: { _controller: "YawmanTrainingBundle:LessonPlan:index" }
+
+lessonplan_show:
+    pattern:  /lesson-plan/{id}/show
+    defaults: { _controller: "YawmanTrainingBundle:LessonPlan:show" }
+
+lessonplan_new:
+    pattern:  /lesson-plan/new
+    defaults: { _controller: "YawmanTrainingBundle:LessonPlan:new" }
+
+lessonplan_create:
+    pattern:  /lesson-plan/create
+    defaults: { _controller: "YawmanTrainingBundle:LessonPlan:create" }
+    requirements: { _method: post }
+
+lessonplan_edit:
+    pattern:  /lesson-plan/{id}/edit
+    defaults: { _controller: "YawmanTrainingBundle:LessonPlan:edit" }
+
+lessonplan_update:
+    pattern:  /lesson-plan/{id}/update
+    defaults: { _controller: "YawmanTrainingBundle:LessonPlan:update" }
+    requirements: { _method: post }
+
+lessonplan_delete:
+    pattern:  /lesson-plan/{id}/delete
+    defaults: { _controller: "YawmanTrainingBundle:LessonPlan:delete" }
+    requirements: { _method: post }

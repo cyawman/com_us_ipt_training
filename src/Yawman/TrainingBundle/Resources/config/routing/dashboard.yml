@@ -1,7 +1,3 @@
-dashboard:
-    pattern: /
-    defaults: { _controller: YawmanTrainingBundle:Dashboard:index }
-
 dashboard_user_edit:
     pattern: /user-edit
     defaults: { _controller: YawmanTrainingBundle:Dashboard:userEdit }    

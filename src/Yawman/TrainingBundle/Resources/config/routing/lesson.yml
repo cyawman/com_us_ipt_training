@@ -1,0 +1,30 @@
+lesson:
+    pattern:  /lesson
+    defaults: { _controller: "YawmanTrainingBundle:Lesson:index" }
+
+lesson_show:
+    pattern:  /lesson/{id}/show
+    defaults: { _controller: "YawmanTrainingBundle:Lesson:show" }
+
+lesson_new:
+    pattern:  /lesson/new
+    defaults: { _controller: "YawmanTrainingBundle:Lesson:new" }
+
+lesson_create:
+    pattern:  /lesson/create
+    defaults: { _controller: "YawmanTrainingBundle:Lesson:create" }
+    requirements: { _method: post }
+
+lesson_edit:
+    pattern:  /lesson/{id}/edit
+    defaults: { _controller: "YawmanTrainingBundle:Lesson:edit" }
+
+lesson_update:
+    pattern:  /lesson/{id}/update
+    defaults: { _controller: "YawmanTrainingBundle:Lesson:update" }
+    requirements: { _method: post }
+
+lesson_delete:
+    pattern:  /lesson/{id}/delete
+    defaults: { _controller: "YawmanTrainingBundle:Lesson:delete" }
+    requirements: { _method: post }

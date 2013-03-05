@@ -1,0 +1,39 @@
+user:
+    pattern:  /user
+    defaults: { _controller: "YawmanTrainingBundle:User:index" }
+
+user_show:
+    pattern:  /user/{id}/show
+    defaults: { _controller: "YawmanTrainingBundle:User:show" }
+
+user_new:
+    pattern:  /user/new
+    defaults: { _controller: "YawmanTrainingBundle:User:new" }
+
+user_create:
+    pattern:  /user/create
+    defaults: { _controller: "YawmanTrainingBundle:User:create" }
+    requirements: { _method: post }
+
+user_edit:
+    pattern:  /user/{id}/edit
+    defaults: { _controller: "YawmanTrainingBundle:User:edit" }
+
+user_update:
+    pattern:  /user/{id}/update
+    defaults: { _controller: "YawmanTrainingBundle:User:update" }
+    requirements: { _method: post }
+
+user_edit_password:
+    pattern:  /user/{id}/edit-password
+    defaults: { _controller: "YawmanTrainingBundle:User:editPassword" }
+
+user_update_password:
+    pattern:  /user/{id}/update-password
+    defaults: { _controller: "YawmanTrainingBundle:User:updatePassword" }
+    requirements: { _method: post }
+
+user_delete:
+    pattern:  /user/{id}/delete
+    defaults: { _controller: "YawmanTrainingBundle:User:delete" }
+    requirements: { _method: post }
