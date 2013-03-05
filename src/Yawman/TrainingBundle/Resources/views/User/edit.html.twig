@@ -6,7 +6,9 @@
 <h1>User edit</h1>
 
 <form action="{{ path('user_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
-    {{ form_errors(edit_form) }}
+    {% if edit_form.get('errors') is not empty %}
+    <div class="alert alert-error alert-block">{{ form_errors(edit_form) }}</div>
+    {% endif %}
 
     {{ form_row(edit_form.email) }}
 

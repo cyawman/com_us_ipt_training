@@ -295,7 +295,7 @@ class UserController extends Controller {
                 $data = $form->getData();
 
                 if ($data->getPassword() != $data->getPasswordConfirm()) {
-                    $form->addError(new FormError('Your New Password and Confirmation Password did not match'));
+                    $form->addError(new FormError('New Password and Confirmation Password did not match'));
                     throw new PasswordConfirmationException('The new password did not match the confirmation password');
                 }
 
