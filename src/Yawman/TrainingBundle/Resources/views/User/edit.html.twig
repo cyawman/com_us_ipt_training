@@ -5,12 +5,6 @@
 {% block content %}
 <h1>User edit</h1>
 
-{% if app.session.hasFlash('success') %}
-    <div class="alert alert-success">
-        {{ app.session.flash('success') }}
-    </div>
-{% endif %}
-
 <form action="{{ path('user_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
     {{ form_errors(edit_form) }}
 

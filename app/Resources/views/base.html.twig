@@ -31,6 +31,30 @@
                 </div>
             </div>
         </div>
+        {% block flashes %}
+            <div class="container">
+            {% if app.session.hasFlash('error') %}
+                <div class="alert alert-error">
+                    {{ app.session.flash('error') }}
+                </div>
+            {% endif %}
+            {% if app.session.hasFlash('warning') %}
+                <div class="alert">
+                    {{ app.session.flash('warning') }}
+                </div>
+            {% endif %}
+            {% if app.session.hasFlash('info') %}
+                <div class="alert alert-info">
+                    {{ app.session.flash('info') }}
+                </div>
+            {% endif %}
+            {% if app.session.hasFlash('success') %}
+                <div class="alert alert-success">
+                    {{ app.session.flash('success') }}
+                </div>
+            {% endif %}
+            </div>
+        {% endblock %}
         {% block body %}
             {% block content %}{% endblock %}
         {% endblock %}

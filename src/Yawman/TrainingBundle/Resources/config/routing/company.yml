@@ -1,30 +1,30 @@
 company:
-    pattern:  /company
+    pattern:  /
     defaults: { _controller: "YawmanTrainingBundle:Company:index" }
 
 company_show:
-    pattern:  /company/{id}/show
+    pattern:  /{id}/show
     defaults: { _controller: "YawmanTrainingBundle:Company:show" }
 
 company_new:
-    pattern:  /company/new
+    pattern:  /new
     defaults: { _controller: "YawmanTrainingBundle:Company:new" }
 
 company_create:
-    pattern:  /company/create
+    pattern:  /create
     defaults: { _controller: "YawmanTrainingBundle:Company:create" }
     requirements: { _method: post }
 
 company_edit:
-    pattern:  /company/{id}/edit
+    pattern:  /{id}/edit
     defaults: { _controller: "YawmanTrainingBundle:Company:edit" }
 
 company_update:
-    pattern:  /company/{id}/update
+    pattern:  /{id}/update
     defaults: { _controller: "YawmanTrainingBundle:Company:update" }
     requirements: { _method: post }
 
 company_delete:
-    pattern:  /company/{id}/delete
+    pattern:  /{id}/delete
     defaults: { _controller: "YawmanTrainingBundle:Company:delete" }
     requirements: { _method: post }

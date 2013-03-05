@@ -31,5 +31,8 @@
     </tbody>
 </table>
 
-<a class="btn btn-primary" href="{{ path('user_new') }}"><i class="icon-user icon-white"></i> Create User</a>
+{% if is_granted('ROLE_MANAGER') %}
+    <a class="btn btn-primary" href="{{ path('user_new') }}"><i class="icon-user icon-white"></i> Create User</a>
+{% endif %}
+
 {% endblock %}

@@ -1,45 +1,23 @@
-dashboard:
-    pattern: /dashboard
-    defaults: { _controller: YawmanTrainingBundle:Dashboard:index }
-    
-YawmanTrainingBundle_user:
-        resource: "@YawmanTrainingBundle/Resources/config/routing/user.yml"
-        prefix:   /
-
-YawmanTrainingBundle_company:
-        resource: "@YawmanTrainingBundle/Resources/config/routing/company.yml"
-        prefix:   /
-
-YawmanTrainingBundle_lesson:
-        resource: "@YawmanTrainingBundle/Resources/config/routing/lesson.yml"
-        prefix:   /
-
-YawmanTrainingBundle_lessonplan:
-        resource: "@YawmanTrainingBundle/Resources/config/routing/lessonplan.yml"
-        prefix:   /
-
-yawman_training_homepage:
+homepage:
     pattern:  /
     defaults: { _controller: YawmanTrainingBundle:Default:index }
     
-yawman_training_registration:
-    pattern:  /registration
-    defaults: { _controller: YawmanTrainingBundle:Default:registration }
-
-yawman_training_register:
-    pattern:  /register
-    defaults: { _controller: YawmanTrainingBundle:Default:register }
-    requirements: { _method: post }
-
-yawman_training_change_password:
-    pattern:  /change-password
-    defaults: { _controller: YawmanTrainingBundle:Security:changePassword }
-
-yawman_training_update_change_password:
-    pattern:  /update-password
-    defaults: { _controller: YawmanTrainingBundle:Security:updatePassword }
-    requirements: { _method: post }
-
 YawmanTrainingBundle_dashboard:
         resource: "@YawmanTrainingBundle/Resources/config/routing/dashboard.yml"
         prefix:   /dashboard
+    
+YawmanTrainingBundle_user:
+        resource: "@YawmanTrainingBundle/Controller/UserController.php"
+        type: annotation
+
+YawmanTrainingBundle_company:
+        resource: "@YawmanTrainingBundle/Resources/config/routing/company.yml"
+        prefix:   /company
+
+YawmanTrainingBundle_lesson:
+        resource: "@YawmanTrainingBundle/Resources/config/routing/lesson.yml"
+        prefix:   /lesson
+
+YawmanTrainingBundle_lessonplan:
+        resource: "@YawmanTrainingBundle/Resources/config/routing/lessonplan.yml"
+        prefix:   /lesson-plan
