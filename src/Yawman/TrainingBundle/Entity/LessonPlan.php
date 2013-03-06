@@ -8,11 +8,11 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * Lesson Plan
  *
- * @ORM\Table(name="lesson_plan")
+ * @ORM\Table(name="lessonplan")
  * @ORM\Entity
  */
 class LessonPlan {
-    
+
     /**
      * @var integer
      *
@@ -30,30 +30,37 @@ class LessonPlan {
     private $name;
     
     /**
-     * @ORM\ManyToMany(targetEntity="Lesson", inversedBy="plans")
+     * @var string
      *
+     * @ORM\Column(name="description", type="string", length=255, nullable=false)
      */
-    private $lessons;
-    
+    private $description;
+
     /**
+     * @var ArrayCollection
+     * 
      * @ORM\ManyToMany(targetEntity="User", mappedBy="lessonplans")
-     *
      */
     private $users;
-    
+
+    /**
+     * @var ArrayCollection
+     * 
+     * @ORM\OneToMany(targetEntity="LessonPlanLesson", mappedBy="lesson")
+     */
+    private $lessons;
+
     public function __construct() {
         $this->lessons = new ArrayCollection();
         $this->users = new ArrayCollection();
     }
-    
 
     /**
      * Get id
      *
      * @return integer 
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -63,10 +70,9 @@ class LessonPlan {
      * @param string $name
      * @return LessonPlan
      */
-    public function setName($name)
-    {
+    public function setName($name) {
         $this->name = $name;
-    
+
         return $this;
     }
 
@@ -75,49 +81,27 @@ class LessonPlan {
      *
      * @return string 
      */
-    public function getName()
-    {
+    public function getName() {
         return $this->name;
     }
-
-    /**
-     * Add lessons
-     *
-     * @param \Yawman\TrainingBundle\Entity\Lesson $lessons
-     * @return LessonPlan
-     */
-    public function addLesson(\Yawman\TrainingBundle\Entity\Lesson $lessons)
-    {
-        $this->lessons[] = $lessons;
     
-        return $this;
+    /**
+     * Get description
+     * 
+     * @return string
+     */
+    public function getDescription() {
+        return $this->description;
     }
 
     /**
-     * Remove lessons
-     *
-     * @param \Yawman\TrainingBundle\Entity\Lesson $lessons
+     * Set description
+     * 
+     * @param string $description
      */
-    public function removeLesson(\Yawman\TrainingBundle\Entity\Lesson $lessons)
-    {
-        $this->lessons->removeElement($lessons);
+    public function setDescription($description) {
+        $this->description = $description;
     }
-
-    /**
-     * Get lessons
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getLessons()
-    {
-        return $this->lessons;
-    }
-    
-    public function __toString()
-    {
-        return sprintf('%s', $this->name);
-    }
-
 
     /**
      * Add users
@@ -125,10 +109,9 @@ class LessonPlan {
      * @param \Yawman\TrainingBundle\Entity\User $users
      * @return LessonPlan
      */
-    public function addUser(\Yawman\TrainingBundle\Entity\User $users)
-    {
+    public function addUser(\Yawman\TrainingBundle\Entity\User $users) {
         $this->users[] = $users;
-    
+
         return $this;
     }
 
@@ -137,8 +120,7 @@ class LessonPlan {
      *
      * @param \Yawman\TrainingBundle\Entity\User $users
      */
-    public function removeUser(\Yawman\TrainingBundle\Entity\User $users)
-    {
+    public function removeUser(\Yawman\TrainingBundle\Entity\User $users) {
         $this->users->removeElement($users);
     }
 
@@ -147,8 +129,42 @@ class LessonPlan {
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getUsers()
-    {
+    public function getUsers() {
         return $this->users;
     }
+
+    /**
+     * Add lessons
+     *
+     * @param \Yawman\TrainingBundle\Entity\LessonPlanLesson $lessons
+     * @return LessonPlan
+     */
+    public function addLesson(\Yawman\TrainingBundle\Entity\LessonPlanLesson $lessons) {
+        $this->lessons[] = $lessons;
+
+        return $this;
+    }
+
+    /**
+     * Remove lessons
+     *
+     * @param \Yawman\TrainingBundle\Entity\LessonPlanLesson $lessons
+     */
+    public function removeLesson(\Yawman\TrainingBundle\Entity\LessonPlanLesson $lessons) {
+        $this->lessons->removeElement($lessons);
+    }
+
+    /**
+     * Get lessons
+     *
+     * @return ArrayCollection 
+     */
+    public function getLessons() {
+        return $this->lessons;
+    }
+
+    public function __toString() {
+        return sprintf('%s', $this->name);
+    }
+
 }

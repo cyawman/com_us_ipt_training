@@ -28,44 +28,41 @@ class Lesson {
      * @ORM\Column(name="name", type="string", length=60, nullable=false)
      */
     private $name;
-    
+
     /**
      * @var string
      *
      * @ORM\Column(name="description", type="string", length=255, nullable=false)
      */
     private $description;
-    
+
     /**
      * @var string
      *
      * @ORM\Column(name="path", type="string", length=255, nullable=false)
      */
     private $path;
-    
+
     /**
-     * @var \Doctrine\Common\Collections\Collection
-     *
-     * @ORM\ManyToMany(targetEntity="LessonPlan", mappedBy="lessons")
+     * @var ArrayCollection
+     * 
+     * @ORM\OneToMany(targetEntity="LessonPlanLesson", mappedBy="lessonplan")
      */
-    private $plans;
-    
+    private $lessonplans;
+
     /**
      * Constructor
      */
-    public function __construct()
-    {
-        $this->plans = new ArrayCollection();
+    public function __construct() {
+        $this->lessonplans = new ArrayCollection();
     }
-    
 
     /**
      * Get id
      *
      * @return integer 
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -75,10 +72,9 @@ class Lesson {
      * @param string $name
      * @return Lesson
      */
-    public function setName($name)
-    {
+    public function setName($name) {
         $this->name = $name;
-    
+
         return $this;
     }
 
@@ -87,11 +83,10 @@ class Lesson {
      *
      * @return string 
      */
-    public function getName()
-    {
+    public function getName() {
         return $this->name;
     }
-    
+
     /**
      * Get description
      * 
@@ -127,42 +122,39 @@ class Lesson {
     public function setPath($path) {
         $this->path = $path;
     }
-    
+
     /**
-     * Add plans
+     * Add lessonplans
      *
-     * @param \Yawman\TrainingBundle\Entity\LessonPlan $plans
+     * @param \Yawman\TrainingBundle\Entity\LessonPlanLesson $lessonplans
      * @return Lesson
      */
-    public function addPlan(\Yawman\TrainingBundle\Entity\LessonPlan $plans)
-    {
-        $this->plans[] = $plans;
-    
+    public function addLessonplan(\Yawman\TrainingBundle\Entity\LessonPlanLesson $lessonplans) {
+        $this->lessonplans[] = $lessonplans;
+
         return $this;
     }
 
     /**
-     * Remove plans
+     * Remove lessonplans
      *
-     * @param \Yawman\TrainingBundle\Entity\LessonPlan $plans
+     * @param \Yawman\TrainingBundle\Entity\LessonPlanLesson $lessonplans
      */
-    public function removePlan(\Yawman\TrainingBundle\Entity\LessonPlan $plans)
-    {
-        $this->plans->removeElement($plans);
+    public function removeLessonplan(\Yawman\TrainingBundle\Entity\LessonPlanLesson $lessonplans) {
+        $this->lessonplans->removeElement($lessonplans);
     }
 
     /**
-     * Get plans
+     * Get lessonplans
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return ArrayCollection 
      */
-    public function getPlans()
-    {
-        return $this->plans;
+    public function getLessonplans() {
+        return $this->lessonplans;
     }
-    
-    public function __toString()
-    {
+
+    public function __toString() {
         return sprintf('%s', $this->name);
     }
+
 }
