@@ -1,3 +1,0 @@
-dashboard:
-    pattern: /
-    defaults: { _controller: YawmanTrainingBundle:Dashboard:index }

@@ -4,9 +4,6 @@ namespace Yawman\TrainingBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Security\Core\SecurityContext;
-use \Symfony\Component\Form\FormError;
-use Yawman\TrainingBundle\Model\ChangePassword;
-use Yawman\TrainingBundle\Form\ChangePasswordType;
 
 class SecurityController extends Controller {
 

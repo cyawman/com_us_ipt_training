@@ -2,14 +2,27 @@
 
 namespace Yawman\TrainingBundle\Controller;
 
+use JMS\SecurityExtraBundle\Annotation\Secure;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use \Symfony\Component\Form\FormError;
 use Yawman\TrainingBundle\Model\Registration;
 use Yawman\TrainingBundle\Form\RegistrationType;
 use Yawman\TrainingBundle\Entity\User;
 
+/**
+ * Controls the management of Default actions
+ * 
+ * @author Chris Yawman
+ */
 class DefaultController extends Controller {
 
+    /**
+     * Displays the Homepage
+     * 
+     * @Route("/", name="homepage")
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     public function indexAction() {
         return $this->render('YawmanTrainingBundle:Default:index.html.twig');
     }

@@ -2,10 +2,24 @@
 
 namespace Yawman\TrainingBundle\Controller;
 
+use JMS\SecurityExtraBundle\Annotation\Secure;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
+/**
+ * Controls the management of the Dashboard
+ * 
+ * @author Chris Yawman
+ * @Route("/dashboard")
+ */
 class DashboardController extends Controller {
 
+    /**
+     * Controls the logic around rendering the welcome and dashboard actions
+     * 
+     * @Route("/", name="dashboard")
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     public function indexAction() {
         $em = $this->getDoctrine()->getManager();
 
@@ -38,17 +52,33 @@ class DashboardController extends Controller {
         return $response;
     }
 
+    /**
+     * Renders the Welcome view for all Users
+     * 
+     * @Route("/welcome-user", name="welcome_user")
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     public function userWelcomeAction() {
         return $this->render('YawmanTrainingBundle:Dashboard:user-welcome.html.twig');
     }
 
+    /**
+     * Renders the Welcome view for all Users with ROLE_MANAGER
+     * 
+     * @Secure(roles="ROLE_MANAGER")
+     * @Route("/welcome-manager", name="welcome_manager")
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     public function managementWelcomeAction() {
-        if (false === $this->get('security.context')->isGranted('ROLE_MANAGER')) {
-            throw new AccessDeniedException();
-        }
         return $this->render('YawmanTrainingBundle:Dashboard:management-welcome.html.twig');
     }
 
+    /**
+     * Renders the Dashboard view for all Users
+     * 
+     * @Route("/user-dashboard", name="user_dashboard")
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     public function userDashboardAction() {
         $em = $this->getDoctrine()->getManager();
 
@@ -57,11 +87,26 @@ class DashboardController extends Controller {
         return $this->render('YawmanTrainingBundle:Dashboard:user-dashboard.html.twig', array('userLessons' => $userLessons));
     }
 
+    /**
+     * Renders the Dashboard view for all Users with ROLE_MANAGER
+     * 
+     * @Secure(roles="ROLE_MANAGER")
+     * @Route("/manager-dashboard", name="manager_dashboard")
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     public function managementDashboardAction() {
         return $this->render('YawmanTrainingBundle:Dashboard:management-dashboard.html.twig');
     }
 
+    /**
+     * Renders the Dashboard view for all Users with ROLE_ADMIN
+     * 
+     * @Secure(roles="ROLE_ADMIN")
+     * @Route("/admin-dashboard", name="admin_dashboard")
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     public function adminDashboardAction() {
         return $this->render('YawmanTrainingBundle:Dashboard:admin-dashboard.html.twig');
     }
+
 }
