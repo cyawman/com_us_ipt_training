@@ -11,8 +11,8 @@ YawmanTrainingBundle_user:
         type: annotation
 
 YawmanTrainingBundle_company:
-        resource: "@YawmanTrainingBundle/Resources/config/routing/company.yml"
-        prefix:   /company
+        resource: "@YawmanTrainingBundle/Controller/CompanyController.php"
+        type: annotation
 
 YawmanTrainingBundle_lesson:
         resource: "@YawmanTrainingBundle/Resources/config/routing/lesson.yml"

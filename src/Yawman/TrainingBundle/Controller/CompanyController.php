@@ -2,30 +2,51 @@
 
 namespace Yawman\TrainingBundle\Controller;
 
+use JMS\SecurityExtraBundle\Annotation\Secure;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Yawman\TrainingBundle\Entity\Company;
 use Yawman\TrainingBundle\Form\CompanyType;
 
+/**
+ * Controls the management of Companies
+ * 
+ * @author Chris Yawman
+ * @Route("/company")
+ */
 class CompanyController extends Controller {
 
     /**
-     * Lists all Company entities.
-     *
+     * Lists the Company entities
+     * 
+     * @Secure(roles="ROLE_MANAGER")
+     * @Route("/", name="company")
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function indexAction() {
         $em = $this->getDoctrine()->getManager();
 
-        $entities = $em->getRepository('YawmanTrainingBundle:Company')->findAll();
+        $company = $this->getUser()->getCompany();
 
-        return $this->render('YawmanTrainingBundle:Company:index.html.twig', array(
-                    'entities' => $entities,
-        ));
+        if (false === $this->get('security.context')->isGranted('ROLE_ADMIN')) {
+            $entities = $em->getRepository('YawmanTrainingBundle:Company')->findBy(array('id' => $company->getId()));
+        } else {
+            $entities = $em->getRepository('YawmanTrainingBundle:Company')->findAll();
+        }
+
+        return $this->render('YawmanTrainingBundle:Company:index.html.twig', array('entities' => $entities));
     }
 
     /**
-     * Finds and displays a Company entity.
-     *
+     * Displays a Company entity
+     * 
+     * @Secure(roles="ROLE_MANAGER")
+     * @Route("/{id}/show", requirements={"id" = "\d+"}, name="company_show")
+     * @param int $id
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
     public function showAction($id) {
         $em = $this->getDoctrine()->getManager();
@@ -35,31 +56,39 @@ class CompanyController extends Controller {
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Company entity.');
         }
+        
+        if (false === $this->get('security.context')->isGranted('ROLE_ADMIN')) {
+            if($this->getUser()->getCompany()->getId() !== $entity->getId()){
+                throw new AccessDeniedException();
+            }
+        }
 
         $deleteForm = $this->createDeleteForm($id);
 
-        return $this->render('YawmanTrainingBundle:Company:show.html.twig', array(
-                    'entity' => $entity,
-                    'delete_form' => $deleteForm->createView(),));
+        return $this->render('YawmanTrainingBundle:Company:show.html.twig', array('entity' => $entity, 'delete_form' => $deleteForm->createView()));
     }
 
     /**
-     * Displays a form to create a new Company entity.
-     *
+     * Creates a new Company entity
+     * 
+     * @Secure(roles="ROLE_ADMIN")
+     * @Route("/new", name="company_new")
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function newAction() {
         $entity = new Company();
         $form = $this->createForm(new CompanyType(), $entity);
 
-        return $this->render('YawmanTrainingBundle:Company:new.html.twig', array(
-                    'entity' => $entity,
-                    'form' => $form->createView(),
-        ));
+        return $this->render('YawmanTrainingBundle:Company:new.html.twig', array('entity' => $entity, 'form' => $form->createView()));
     }
 
     /**
-     * Creates a new Company entity.
-     *
+     * Creates a new Company entity
+     * 
+     * @Secure(roles="ROLE_ADMIN")
+     * @Route("/create", requirements={"_method" = "post"}, name="company_create")
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function createAction(Request $request) {
         $entity = new Company();
@@ -74,15 +103,17 @@ class CompanyController extends Controller {
             return $this->redirect($this->generateUrl('company_show', array('id' => $entity->getId())));
         }
 
-        return $this->render('YawmanTrainingBundle:Company:new.html.twig', array(
-                    'entity' => $entity,
-                    'form' => $form->createView(),
-        ));
+        return $this->render('YawmanTrainingBundle:Company:new.html.twig', array('entity' => $entity, 'form' => $form->createView()));
     }
 
     /**
-     * Displays a form to edit an existing Company entity.
-     *
+     * Provides a form to edit a Company entity
+     * 
+     * @Secure(roles="ROLE_MANAGER")
+     * @Route("/{id}/edit", requirements={"id" = "\d+"}, name="company_edit")
+     * @param int $id
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
     public function editAction($id) {
         $em = $this->getDoctrine()->getManager();
@@ -92,20 +123,28 @@ class CompanyController extends Controller {
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Company entity.');
         }
+        
+        if (false === $this->get('security.context')->isGranted('ROLE_ADMIN')) {
+            if($this->getUser()->getCompany()->getId() !== $entity->getId()){
+                throw new AccessDeniedException();
+            }
+        }
 
         $editForm = $this->createForm(new CompanyType(), $entity);
         $deleteForm = $this->createDeleteForm($id);
 
-        return $this->render('YawmanTrainingBundle:Company:edit.html.twig', array(
-                    'entity' => $entity,
-                    'edit_form' => $editForm->createView(),
-                    'delete_form' => $deleteForm->createView(),
-        ));
+        return $this->render('YawmanTrainingBundle:Company:edit.html.twig', array('entity' => $entity, 'edit_form' => $editForm->createView(), 'delete_form' => $deleteForm->createView()));
     }
 
     /**
-     * Edits an existing Company entity.
-     *
+     * Provides a form to update a Company entity
+     * 
+     * @Secure(roles="ROLE_MANAGER")
+     * @Route("/{id}/update", requirements={"_method" = "post", "id" = "\d+"}, name="company_update")
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param int $id
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
     public function updateAction(Request $request, $id) {
         $em = $this->getDoctrine()->getManager();
@@ -114,6 +153,12 @@ class CompanyController extends Controller {
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Company entity.');
+        }
+        
+        if (false === $this->get('security.context')->isGranted('ROLE_ADMIN')) {
+            if($this->getUser()->getCompany()->getId() !== $entity->getId()){
+                throw new AccessDeniedException();
+            }
         }
 
         $deleteForm = $this->createDeleteForm($id);
@@ -131,16 +176,18 @@ class CompanyController extends Controller {
 
         $this->get('session')->setFlash('error', 'The update was unsuccessful.');
 
-        return $this->render('YawmanTrainingBundle:Company:edit.html.twig', array(
-                    'entity' => $entity,
-                    'edit_form' => $editForm->createView(),
-                    'delete_form' => $deleteForm->createView(),
-        ));
+        return $this->render('YawmanTrainingBundle:Company:edit.html.twig', array('entity' => $entity, 'edit_form' => $editForm->createView(), 'delete_form' => $deleteForm->createView()));
     }
 
     /**
-     * Deletes a Company entity.
-     *
+     * Deletes a Company entity
+     * 
+     * @Secure(roles="ROLE_ADMIN")
+     * @Route("/{id}/delete", requirements={"id" = "\d+"}, name="company_delete")
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param int $id
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
     public function deleteAction(Request $request, $id) {
         $form = $this->createDeleteForm($id);
@@ -161,6 +208,12 @@ class CompanyController extends Controller {
         return $this->redirect($this->generateUrl('company'));
     }
 
+    /**
+     * Provides a form used to delete a Company entity
+     * 
+     * @param int $id
+     * @return \Symfony\Component\Form\FormBuilder
+     */
     private function createDeleteForm($id) {
         return $this->createFormBuilder(array('id' => $id))
                         ->add('id', 'hidden')
