@@ -30,6 +30,20 @@ class Lesson {
     private $name;
     
     /**
+     * @var string
+     *
+     * @ORM\Column(name="description", type="string", length=255, nullable=false)
+     */
+    private $description;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="path", type="string", length=255, nullable=false)
+     */
+    private $path;
+    
+    /**
      * @var \Doctrine\Common\Collections\Collection
      *
      * @ORM\ManyToMany(targetEntity="LessonPlan", mappedBy="lessons")
@@ -77,7 +91,43 @@ class Lesson {
     {
         return $this->name;
     }
+    
+    /**
+     * Get description
+     * 
+     * @return string
+     */
+    public function getDescription() {
+        return $this->description;
+    }
 
+    /**
+     * Set description
+     * 
+     * @param string $description
+     */
+    public function setDescription($description) {
+        $this->description = $description;
+    }
+
+    /**
+     * Get path
+     * 
+     * @return string
+     */
+    public function getPath() {
+        return $this->path;
+    }
+
+    /**
+     * Set path
+     * 
+     * @param string $path
+     */
+    public function setPath($path) {
+        $this->path = $path;
+    }
+    
     /**
      * Add plans
      *

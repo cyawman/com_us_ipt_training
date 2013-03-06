@@ -54,22 +54,21 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface, C
         
         $manager->persist($tyawmanUser);
         
-        $adminUser = new User();
-        $adminUser->setUsername('admin');
-        $adminUser->setEmail('training-admin@ipt.us.com');
-        $adminUser->setIsActive(true);
-        $adminUser->setCompany($this->getReference('individual-company'));
-        $adminEncoder = $encoder->getEncoder($adminUser);
-        $adminUser->setPassword($adminEncoder->encodePassword('cnasty328', $adminUser->getSalt()));
-        $adminUser->addGroup($manager->merge($this->getReference('admin-group')));
+        $randomUser = new User();
+        $randomUser->setUsername('random');
+        $randomUser->setEmail('training-random@ipt.us.com');
+        $randomUser->setIsActive(true);
+        $randomEncoder = $encoder->getEncoder($randomUser);
+        $randomUser->setPassword($randomEncoder->encodePassword('cnasty328', $randomUser->getSalt()));
+        $randomUser->addGroup($manager->merge($this->getReference('user-group')));
         
-        $manager->persist($adminUser);
+        $manager->persist($randomUser);
         
         $managerUser = new User();
         $managerUser->setUsername('manager');
         $managerUser->setEmail('training-manager@ipt.us.com');
         $managerUser->setIsActive(true);
-        $managerUser->setCompany($this->getReference('individual-company'));
+        $managerUser->setCompany($this->getReference('aldi-company'));
         $managerEncoder = $encoder->getEncoder($managerUser);
         $managerUser->setPassword($managerEncoder->encodePassword('cnasty328', $managerUser->getSalt()));
         $managerUser->addGroup($manager->merge($this->getReference('manager-group')));
@@ -80,7 +79,7 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface, C
         $userUser->setUsername('user');
         $userUser->setEmail('training-user@ipt.us.com');
         $userUser->setIsActive(true);
-        $userUser->setCompany($this->getReference('individual-company'));
+        $userUser->setCompany($this->getReference('aldi-company'));
         $userEncoder = $encoder->getEncoder($userUser);
         $userUser->setPassword($userEncoder->encodePassword('cnasty328', $userUser->getSalt()));
         $userUser->addGroup($manager->merge($this->getReference('user-group')));

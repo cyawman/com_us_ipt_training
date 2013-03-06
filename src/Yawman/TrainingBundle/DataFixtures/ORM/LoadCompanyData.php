@@ -15,18 +15,18 @@ class LoadCompanyData extends AbstractFixture implements OrderedFixtureInterface
      */
     public function load(ObjectManager $manager)
     {
-        $individualCompany = new Company();
-        $individualCompany->setName('individual');
-        $manager->persist($individualCompany);
-        
         $iptCompany = new Company();
-        $iptCompany->setName('international produce training');
+        $iptCompany->setName('International Produce Training');
         $manager->persist($iptCompany);
+        
+        $aldiCompany = new Company();
+        $aldiCompany->setName('Aldi');
+        $manager->persist($aldiCompany);
         
         $manager->flush();
         
-        $this->addReference('individual-company', $individualCompany);
         $this->addReference('ipt-company', $iptCompany);
+        $this->addReference('aldi-company', $aldiCompany);
     }
     
     /**
