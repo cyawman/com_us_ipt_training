@@ -2,30 +2,44 @@
 
 namespace Yawman\TrainingBundle\Controller;
 
+use JMS\SecurityExtraBundle\Annotation\Secure;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Yawman\TrainingBundle\Entity\LessonPlan;
 use Yawman\TrainingBundle\Form\LessonPlanType;
 
+/**
+ * Controls the management of LessonPlan entities
+ * 
+ * @author chris Yawman
+ * @Route("/lesson-plan")
+ */
 class LessonPlanController extends Controller {
 
     /**
-     * Lists all LessonPlan entities.
-     *
+     * Lists all LessonPlan entities
+     * 
+     * @Secure(roles="ROLE_ADMIN")
+     * @Route("/", name="lessonplan")
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function indexAction() {
         $em = $this->getDoctrine()->getManager();
 
         $entities = $em->getRepository('YawmanTrainingBundle:LessonPlan')->findAll();
 
-        return $this->render('YawmanTrainingBundle:LessonPlan:index.html.twig', array(
-                    'entities' => $entities,
-        ));
+        return $this->render('YawmanTrainingBundle:LessonPlan:index.html.twig', array('entities' => $entities));
     }
 
     /**
-     * Finds and displays a LessonPlan entity.
-     *
+     * Displays a LessonPlan entity
+     * 
+     * @Secure(roles="ROLE_ADMIN")
+     * @Route("/{id}/show", requirements={"id" = "\d+"}, name="lessonplan_show")
+     * @param int $id
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
     public function showAction($id) {
         $em = $this->getDoctrine()->getManager();
@@ -38,28 +52,30 @@ class LessonPlanController extends Controller {
 
         $deleteForm = $this->createDeleteForm($id);
 
-        return $this->render('YawmanTrainingBundle:LessonPlan:show.html.twig', array(
-                    'entity' => $entity,
-                    'delete_form' => $deleteForm->createView(),));
+        return $this->render('YawmanTrainingBundle:LessonPlan:show.html.twig', array('entity' => $entity, 'delete_form' => $deleteForm->createView()));
     }
 
     /**
-     * Displays a form to create a new LessonPlan entity.
-     *
+     * Creates a new LessonPlan entity
+     * 
+     * @Secure(roles="ROLE_ADMIN")
+     * @Route("/new", name="lessonplan_new")
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function newAction() {
         $entity = new LessonPlan();
         $form = $this->createForm(new LessonPlanType(), $entity);
 
-        return $this->render('YawmanTrainingBundle:LessonPlan:new.html.twig', array(
-                    'entity' => $entity,
-                    'form' => $form->createView(),
-        ));
+        return $this->render('YawmanTrainingBundle:LessonPlan:new.html.twig', array('entity' => $entity, 'form' => $form->createView()));
     }
 
     /**
-     * Creates a new LessonPlan entity.
-     *
+     * Creates a new LessonPlan entity
+     * 
+     * @Secure(roles="ROLE_ADMIN")
+     * @Route("/create", requirements={"_method" = "post"}, name="lessonplan_create")
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function createAction(Request $request) {
         $entity = new LessonPlan();
@@ -74,15 +90,17 @@ class LessonPlanController extends Controller {
             return $this->redirect($this->generateUrl('lessonplan_show', array('id' => $entity->getId())));
         }
 
-        return $this->render('YawmanTrainingBundle:LessonPlan:new.html.twig', array(
-                    'entity' => $entity,
-                    'form' => $form->createView(),
-        ));
+        return $this->render('YawmanTrainingBundle:LessonPlan:new.html.twig', array('entity' => $entity, 'form' => $form->createView()));
     }
 
     /**
-     * Displays a form to edit an existing LessonPlan entity.
-     *
+     * Provides a form to edit a LessonPlan entity
+     * 
+     * @Secure(roles="ROLE_ADMIN")
+     * @Route("/{id}/edit", requirements={"id" = "\d+"}, name="lessonplan_edit")
+     * @param int $id
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
     public function editAction($id) {
         $em = $this->getDoctrine()->getManager();
@@ -96,16 +114,18 @@ class LessonPlanController extends Controller {
         $editForm = $this->createForm(new LessonPlanType(), $entity);
         $deleteForm = $this->createDeleteForm($id);
 
-        return $this->render('YawmanTrainingBundle:LessonPlan:edit.html.twig', array(
-                    'entity' => $entity,
-                    'edit_form' => $editForm->createView(),
-                    'delete_form' => $deleteForm->createView(),
-        ));
+        return $this->render('YawmanTrainingBundle:LessonPlan:edit.html.twig', array('entity' => $entity, 'edit_form' => $editForm->createView(), 'delete_form' => $deleteForm->createView()));
     }
 
     /**
-     * Edits an existing LessonPlan entity.
-     *
+     * Provides a form to edit a LessonPlan entity
+     * 
+     * @Secure(roles="ROLE_ADMIN")
+     * @Route("/{id}/update", requirements={"_method" = "post", "id" = "\d+"}, name="lessonplan_update")
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param int $id
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
     public function updateAction(Request $request, $id) {
         $em = $this->getDoctrine()->getManager();
@@ -127,16 +147,18 @@ class LessonPlanController extends Controller {
             return $this->redirect($this->generateUrl('lessonplan_edit', array('id' => $id)));
         }
 
-        return $this->render('YawmanTrainingBundle:LessonPlan:edit.html.twig', array(
-                    'entity' => $entity,
-                    'edit_form' => $editForm->createView(),
-                    'delete_form' => $deleteForm->createView(),
-        ));
+        return $this->render('YawmanTrainingBundle:LessonPlan:edit.html.twig', array('entity' => $entity, 'edit_form' => $editForm->createView(), 'delete_form' => $deleteForm->createView()));
     }
 
     /**
-     * Deletes a LessonPlan entity.
-     *
+     * Deletes a LessonPlan entity
+     * 
+     * @Secure(roles="ROLE_ADMIN")
+     * @Route("/{id}/delete", requirements={"_method" = "post", "id" = "\d+"}, name="lessonplan_delete")
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param int $id
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
     public function deleteAction(Request $request, $id) {
         $form = $this->createDeleteForm($id);
@@ -157,11 +179,15 @@ class LessonPlanController extends Controller {
         return $this->redirect($this->generateUrl('lessonplan'));
     }
 
+    /**
+     * Provides a form to delete a LessonPlan entity
+     * 
+     * @param int $id
+     * @return \Symfony\Component\Form\FormBuilder
+     */
     private function createDeleteForm($id) {
         return $this->createFormBuilder(array('id' => $id))
                         ->add('id', 'hidden')
-                        ->getForm()
-        ;
+                        ->getForm();
     }
-
 }
