@@ -108,10 +108,14 @@ class DashboardController extends Controller {
     public function adminDashboardAction() {
         
         $em = $this->getDoctrine()->getManager();
+        
+        $userLessons = $em->getRepository('YawmanTrainingBundle:UserLesson')->findBy(array(), null, 5);
+        
+        $companies = $em->getRepository('YawmanTrainingBundle:Company')->findBy(array(), null, 5);
 
-        $lessonPlans = $em->getRepository('YawmanTrainingBundle:LessonPlan')->findAll();
+        $lessonPlans = $em->getRepository('YawmanTrainingBundle:LessonPlan')->findBy(array(), null, 5);
 
-        return $this->render('YawmanTrainingBundle:Dashboard:admin-dashboard.html.twig', array('lessonPlans' => $lessonPlans));
+        return $this->render('YawmanTrainingBundle:Dashboard:admin-dashboard.html.twig', array('userLessons' => $userLessons, 'companies' => $companies , 'lessonPlans' => $lessonPlans));
     }
 
 }
