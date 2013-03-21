@@ -14,13 +14,13 @@ class LessonPlanLesson {
     
     /**
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="LessonPlan", inversedBy="lessonplans")
+     * @ORM\ManyToOne(targetEntity="LessonPlan", inversedBy="lessonPlanLessons")
      */
-    private $lessonplan;
+    private $lessonPlan;
     
     /**
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="Lesson", inversedBy="lessons")
+     * @ORM\ManyToOne(targetEntity="Lesson", inversedBy="lessonPlanLessons")
      */
     private $lesson;
     
@@ -34,17 +34,17 @@ class LessonPlanLesson {
      * 
      * @return LessonPlan
      */
-    public function getLessonplan() {
-        return $this->lessonplan;
+    public function getLessonPlan() {
+        return $this->lessonPlan;
     }
 
     /**
      * Set the LessonPlan entity
      * 
-     * @param \Yawman\TrainingBundle\Entity\LessonPlan $lessonplan
+     * @param \Yawman\TrainingBundle\Entity\LessonPlan $lessonPlan
      */
-    public function setLessonplan(LessonPlan $lessonplan) {
-        $this->lessonplan = $lessonplan;
+    public function setLessonPlan(LessonPlan $lessonPlan) {
+        $this->lessonPlan = $lessonPlan;
     }
 
     /**

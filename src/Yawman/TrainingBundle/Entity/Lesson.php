@@ -46,15 +46,15 @@ class Lesson {
     /**
      * @var ArrayCollection
      * 
-     * @ORM\OneToMany(targetEntity="LessonPlanLesson", mappedBy="lessonplan")
+     * @ORM\OneToMany(targetEntity="LessonPlanLesson", mappedBy="lesson")
      */
-    private $lessonplans;
+    private $lessonPlanLessons;
 
     /**
      * Constructor
      */
     public function __construct() {
-        $this->lessonplans = new ArrayCollection();
+        $this->lessonPlanLessons = new ArrayCollection();
     }
 
     /**
@@ -124,33 +124,33 @@ class Lesson {
     }
 
     /**
-     * Add lessonplans
+     * Add lesson plan lessons
      *
-     * @param \Yawman\TrainingBundle\Entity\LessonPlanLesson $lessonplans
+     * @param \Yawman\TrainingBundle\Entity\LessonPlanLesson $lessonPlanLessons
      * @return Lesson
      */
-    public function addLessonplan(\Yawman\TrainingBundle\Entity\LessonPlanLesson $lessonplans) {
-        $this->lessonplans[] = $lessonplans;
+    public function addLessonPlanLessons(\Yawman\TrainingBundle\Entity\LessonPlanLesson $lessonPlanLessons) {
+        $this->lessonPlanLessons[] = $lessonPlanLessons;
 
         return $this;
     }
 
     /**
-     * Remove lessonplans
+     * Remove lesson plan lessons
      *
-     * @param \Yawman\TrainingBundle\Entity\LessonPlanLesson $lessonplans
+     * @param \Yawman\TrainingBundle\Entity\LessonPlanLesson $lessonPlanLessons
      */
-    public function removeLessonplan(\Yawman\TrainingBundle\Entity\LessonPlanLesson $lessonplans) {
-        $this->lessonplans->removeElement($lessonplans);
+    public function removeLessonPlanLessons(\Yawman\TrainingBundle\Entity\LessonPlanLesson $lessonPlanLessons) {
+        $this->lessonPlanLessons->removeElement($lessonPlanLessons);
     }
 
     /**
-     * Get lessonplans
+     * Get lesson plan lessons
      *
      * @return ArrayCollection 
      */
-    public function getLessonplans() {
-        return $this->lessonplans;
+    public function getLessonPlanLessons() {
+        return $this->lessonPlanLessons;
     }
 
     public function __toString() {

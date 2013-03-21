@@ -46,12 +46,12 @@ class LessonPlan {
     /**
      * @var ArrayCollection
      * 
-     * @ORM\OneToMany(targetEntity="LessonPlanLesson", mappedBy="lesson")
+     * @ORM\OneToMany(targetEntity="LessonPlanLesson", mappedBy="lessonPlan")
      */
-    private $lessons;
+    private $lessonPlanLessons;
 
     public function __construct() {
-        $this->lessons = new ArrayCollection();
+        $this->lessonPlanLessons = new ArrayCollection();
         $this->users = new ArrayCollection();
     }
 
@@ -134,33 +134,33 @@ class LessonPlan {
     }
 
     /**
-     * Add lessons
+     * Add lesson plan lessons
      *
-     * @param \Yawman\TrainingBundle\Entity\LessonPlanLesson $lessons
+     * @param \Yawman\TrainingBundle\Entity\LessonPlanLesson $lessonPlanLessons
      * @return LessonPlan
      */
-    public function addLesson(\Yawman\TrainingBundle\Entity\LessonPlanLesson $lessons) {
-        $this->lessons[] = $lessons;
+    public function addLessonPlanLessons(\Yawman\TrainingBundle\Entity\LessonPlanLesson $lessonPlanLessons) {
+        $this->lessonPlanLessons[] = $lessonPlanLesson;
 
         return $this;
     }
 
     /**
-     * Remove lessons
+     * Remove lesson plan lessons
      *
-     * @param \Yawman\TrainingBundle\Entity\LessonPlanLesson $lessons
+     * @param \Yawman\TrainingBundle\Entity\LessonPlanLesson $lessonPlanLessons
      */
-    public function removeLesson(\Yawman\TrainingBundle\Entity\LessonPlanLesson $lessons) {
-        $this->lessons->removeElement($lessons);
+    public function removeLessonPlanLessons(\Yawman\TrainingBundle\Entity\LessonPlanLesson $lessonPlanLessons) {
+        $this->lessonPlanLessons->removeElement($lessonPlanLessons);
     }
 
     /**
-     * Get lessons
+     * Get lesson plan lessons
      *
      * @return ArrayCollection 
      */
-    public function getLessons() {
-        return $this->lessons;
+    public function getLessonPlanLessons() {
+        return $this->lessonPlanLessons;
     }
 
     public function __toString() {

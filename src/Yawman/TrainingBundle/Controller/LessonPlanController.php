@@ -178,6 +178,13 @@ class LessonPlanController extends Controller {
 
         return $this->redirect($this->generateUrl('lessonplan'));
     }
+    
+    /**
+     * 
+     */
+    public function editLessons(){
+        
+    }
 
     /**
      * Provides a form to delete a LessonPlan entity

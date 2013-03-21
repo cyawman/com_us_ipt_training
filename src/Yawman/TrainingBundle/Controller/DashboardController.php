@@ -106,7 +106,12 @@ class DashboardController extends Controller {
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function adminDashboardAction() {
-        return $this->render('YawmanTrainingBundle:Dashboard:admin-dashboard.html.twig');
+        
+        $em = $this->getDoctrine()->getManager();
+
+        $lessonPlans = $em->getRepository('YawmanTrainingBundle:LessonPlan')->findAll();
+
+        return $this->render('YawmanTrainingBundle:Dashboard:admin-dashboard.html.twig', array('lessonPlans' => $lessonPlans));
     }
 
 }
