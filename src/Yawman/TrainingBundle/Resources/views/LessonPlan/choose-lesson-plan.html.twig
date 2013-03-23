@@ -1,0 +1,15 @@
+{% extends "::admin.html.twig" %}
+
+{% block title %}Lesson Plans{% endblock %}
+
+{% block content %}
+<h1>Choose a LessonPlan</h1>
+
+<form action="{{ path('lessonplan_choose_for_lesson') }}" method="post" {{ form_enctype(form) }}>
+    {{ form_widget(form) }}
+    <p>
+        <button type="submit">Next</button>
+    </p>
+</form>
+
+{% endblock %}

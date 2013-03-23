@@ -1,0 +1,57 @@
+{% extends "::admin.html.twig" %}
+
+{% block title %}Lesson Plan Edit Lessons{% endblock %}
+
+{% block content %}
+<div class="row-fluid">
+    <div class="span12"><h1>{{ lesson_plan.name }}</h1></div>
+</div>
+<div class="row-fluid">
+    <div class="span8">
+        <section>
+            <header><h2>Lesson Plan</h2></header>
+            {% if lesson_plan.lessonPlanLessons|length > 0 %}
+                <form class="form-horizontal" action="{{ path('lessonplan_update_lessons', { 'id': lesson_plan.id }) }}" method="post" >
+                    <table class="table table-bordered table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Position</th>
+                                <th>&nbsp;</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for entity in lesson_plan_lessons  %}
+                            <tr>
+                                <td><a href="{{ path('lesson_show', { 'id': entity.lesson.id }) }}">{{ entity.lesson.name }}</a></td>
+                                <td>{{ entity.lesson.description }}</td>
+                                <td><input class="input-mini" type="text" name="form[{{ entity.lesson.id }}]" value="{{ entity.position }}" /></td>
+                                <td><a href="{{ path('lessonplan_remove_lesson', {'lessonPlanId': lesson_plan.id, 'lessonId':entity.lesson.id}) }}">Remove</a></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <input type="submit" value="Update" />
+                    {{ form_row(update_lessons_form._token) }}
+                </form>
+            {% else %}
+                <div class="well well-small">No Lessons in this Lesson Plan</div>
+            {% endif %}
+        </section>
+    </div>
+    <div class="span4">
+        <section>
+            <header><h2>Add a Lesson</h2></header>
+            {% if lessons_not_in_lesson_plan|length > 0 %}
+                <form class="form-horizontal" action="{{ path('lessonplan_add_lessons', { 'id': lesson_plan.id }) }}" method="post" name="addLessons">
+                    {{ form_widget(add_lessons_form) }}
+                    <input type="submit" value="Add" />
+                </form>
+            {% else %}
+                <div class="well well-small">No Lessons left to add to this Lesson Plan</div>
+            {% endif %}
+        </section>
+    </div>
+</div>
+{% endblock %}
