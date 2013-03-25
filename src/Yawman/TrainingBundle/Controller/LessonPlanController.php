@@ -8,7 +8,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Yawman\TrainingBundle\Entity\LessonPlan;
 use Yawman\TrainingBundle\Form\LessonPlanType;
-use \Yawman\TrainingBundle\Entity\LessonPlanLesson;
+use Yawman\TrainingBundle\Entity\LessonPlanLesson;
+use Yawman\TrainingBundle\Entity\UserLessonPlan;
 
 /**
  * Controls the management of LessonPlan entities
@@ -361,6 +362,45 @@ class LessonPlanController extends Controller {
         $this->get('session')->setFlash('success', 'The Lesson was successfully removed from the Lesson Plan!');
 
         return $this->redirect($this->generateUrl('lessonplan_edit_lessons', array('id' => $lessonPlanId)));
+    }
+    
+    /**
+     * Assign a LessonPlan to all Users in a Company
+     * 
+     * @Secure(roles="ROLE_ADMIN")
+     * @Route("/{lessonPlanId}/assign-company-users/{companyId}", requirements={"lessonPlanId" = "\d+", "companyId" = "\d+"}, name="lessonplan_assign_company_users") 
+     * @param int $companyId
+     * @param int $lessonPlanId
+     */
+    public function assignCompanyUsersAction($lessonPlanId, $companyId){
+        $em = $this->getDoctrine()->getEntityManager();
+        
+        $company = $em->getRepository('YawmanTrainingBundle:Company')->find($companyId);
+        if(!$company){
+            throw $this->createNotFoundException('Unable to find Company entity.');
+        }
+        
+        $lessonPlan = $em->getRepository('YawmanTrainingBundle:LessonPlan')->find($lessonPlanId);
+        if(!$lessonPlan){
+            throw $this->createNotFoundException('Unable to find LessonPlan entity.');
+        }
+        
+        foreach($company->getUsers() as $user){
+            $userLessonPlan = $em->getRepository('YawmanTrainingBundle:UserLessonPlan')->findOneBy(array('user' => $user, 'lessonPlan' => $lessonPlan));
+            if(!$userLessonPlan){
+                $userLessonPlan = new UserLessonPlan();
+                $userLessonPlan->setUser($user);
+                $userLessonPlan->setLessonPlan($lessonPlan);
+                $em->persist($userLessonPlan);
+            }
+        }
+        
+        $em->flush();
+        
+        $this->get('session')->setFlash('success', 'The Lesson Plan ('.$lessonPlan->getName().') was successfully added to all Users in '.$company->getName().'!');
+        
+        return $this->redirect($this->generateUrl('dashboard'));
+        
     }
 
     /**
