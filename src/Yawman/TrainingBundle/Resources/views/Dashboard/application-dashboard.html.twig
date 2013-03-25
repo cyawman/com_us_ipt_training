@@ -23,7 +23,7 @@
                     <tbody>
                     {% for entity in userLessons %}
                         <tr>
-                            <td><a href="{{ path('user_show', { 'id': entity.user.id }) }}">{{ entity.user.email }}</a></td>
+                            <td><a href="{{ path('user_dashboard', { 'id': entity.user.id }) }}">{{ entity.user.email }}</a></td>
                             <td><a href="{{ path('lesson_show', { 'id': entity.lesson.id }) }}">{{ entity.lesson.name }}</a></td>
                             <td>{{ entity.status|upper }}</td>
                         </tr>
@@ -50,7 +50,7 @@
                     <tbody>
                     {% for entity in companies %}
                         <tr>
-                            <td><a href="{{ path('company_show', { 'id': entity.id }) }}">{{ entity.name }}</a></td>
+                            <td><a href="{{ path('company_dashboard', { 'id': entity.id }) }}">{{ entity.name }}</a></td>
                             <td>{{ entity.users|length }}</td>
                         </tr>
                     {% endfor %}

@@ -3,28 +3,39 @@
 {% block title %}User Dashboard{% endblock %}
 
 {% block content %}
-<h1>My Lesson Plans</h1>
-{% for plan in userLessons %}
-   <h2>{{ plan.name|upper }}</h2>
-   <table>
-       <thead>
-           <tr>
-               <th>Name</th>
-               <th>Description</th>
-               <th>Status</th>
-           </tr>
-       </thead>
-       <tbody>
-            {% for lesson in plan.lessons %}
-               <tr>
-                   <td>{{ lesson.name }}</td>
-                   <td></td>
-                   <td>{{ lesson.status }}</td>
-               </tr>
-            {% endfor %}
-       </tbody>
-   </table>
-   
-{% endfor %}
+<div class="row-fluid">
+    <div class="span12"><h1>Dashboard</h1></div>
+</div>
+<div class="row-fluid">    
+    <div class="span7">
+        <!-- Recent User Activity -->
+        <section>
+            <header><h2>Lesson Plans</h2></header>
+        </section>
+        {% for userLessonPlan in userLessonPlans %}
+            <table class="table table-bordered table-hover table-striped">
+                <caption>{{ userLessonPlan.lessonPlan.name|upper }}</caption>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                     {% for lessonPlanLesson in userLessonPlan.lessonPlan.lessonPlanLessons %}
+                        <tr>
+                            <td>{{ lessonPlanLesson.lesson.name }}</td>
+                            <td>{{ lessonPlanLesson.lesson.description }}</td>
+                            <td>{% render url('user_lesson_status', {'userId': user.id, 'lessonId':lessonPlanLesson.lesson.id}) %}</td>
+                            <td><a href="{{ path('lesson_play', { 'lessonPlanId': lessonPlanLesson.lessonPlan.id, 'lessonId': lessonPlanLesson.lesson.id }) }}"><i class="icon-play"></i> Play</a></td>
+                        </tr>
+                     {% endfor %}
+                </tbody>
+            </table>
+         {% endfor %}
+     </div>
+</div>
 {% endblock %}
 

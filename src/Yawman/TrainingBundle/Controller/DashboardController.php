@@ -28,16 +28,16 @@ class DashboardController extends Controller {
         $hasLoggedIn = $user->getHasLoggedIn();
 
         if ($this->get('security.context')->isGranted('ROLE_ADMIN')) {
-            $response = $this->forward('YawmanTrainingBundle:Dashboard:adminDashboard');
+            $response = $this->forward('YawmanTrainingBundle:Dashboard:applicationDashboard');
         } else if ($this->get('security.context')->isGranted('ROLE_MANAGER')) {
             if ($hasLoggedIn) {
-                $response = $this->forward('YawmanTrainingBundle:Dashboard:managementDashboard');
+                $response = $this->forward('YawmanTrainingBundle:Dashboard:companyDashboard', $user->getCompany()->getId());
             } else {
                 $response = $this->forward('YawmanTrainingBundle:Dashboard:managementWelcome');
             }
         } else {
             if ($hasLoggedIn) {
-                $response = $this->forward('YawmanTrainingBundle:Dashboard:userDashboard');
+                $response = $this->forward('YawmanTrainingBundle:Dashboard:userDashboard', $user->getId());
             } else {
                 $response = $this->forward('YawmanTrainingBundle:Dashboard:userWelcome');
             }
@@ -76,36 +76,60 @@ class DashboardController extends Controller {
     /**
      * Renders the Dashboard view for all Users
      * 
-     * @Route("/user-dashboard", name="user_dashboard")
+     * @Route("/user/{id}", requirements={"id" = "\d+"}, name="user_dashboard")
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function userDashboardAction() {
+    public function userDashboardAction($id) {
         $em = $this->getDoctrine()->getManager();
 
-        $userLessons = $em->getRepository('YawmanTrainingBundle:UserLesson')->findAllUserLessonsByUser($this->getUser());
+        $user = $em->getRepository('YawmanTrainingBundle:User')->find($id);
+        if(!$user){
+            throw $this->createNotFoundException('Unable to find User entity.');
+        }
+        
+        if (false === $this->get('security.context')->isGranted('ROLE_MANAGER')) {
+            if ($user->getId() !== $this->getUser()->getId()) {
+                throw new AccessDeniedException();
+            }
+        }
+        
+        $userLessonPlans = $em->getRepository('YawmanTrainingBundle:UserLessonPlan')->findBy(array('user' => $user));
 
-        return $this->render('YawmanTrainingBundle:Dashboard:user-dashboard.html.twig', array('userLessons' => $userLessons));
+        return $this->render('YawmanTrainingBundle:Dashboard:user-dashboard.html.twig', array('user' => $user, 'userLessonPlans' => $userLessonPlans));
     }
 
     /**
      * Renders the Dashboard view for all Users with ROLE_MANAGER
      * 
      * @Secure(roles="ROLE_MANAGER")
-     * @Route("/manager-dashboard", name="manager_dashboard")
+     * @Route("/company/{id}", requirements={"id" = "\d+"}, name="company_dashboard")
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function managementDashboardAction() {
-        return $this->render('YawmanTrainingBundle:Dashboard:management-dashboard.html.twig');
+    public function companyDashboardAction($id) {
+        $em = $this->getDoctrine()->getManager();
+        
+        $company = $em->getRepository('YawmanTrainingBundle:Company')->find($id);
+        if(!$company){
+            throw $this->createNotFoundException('Unable to find Company entity.');
+        }
+        
+        if (false === $this->get('security.context')->isGranted('ROLE_ADMIN')) {
+            if ($company !== $this->getUser()->getCompany()) {
+                throw new AccessDeniedException();
+            }
+        }
+        
+        return $this->render('YawmanTrainingBundle:Dashboard:company-dashboard.html.twig');
     }
 
     /**
      * Renders the Dashboard view for all Users with ROLE_ADMIN
      * 
      * @Secure(roles="ROLE_ADMIN")
-     * @Route("/admin-dashboard", name="admin_dashboard")
+     * @Route("/application", name="application_dashboard")
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function adminDashboardAction() {
+    public function applicationDashboardAction() {
         $em = $this->getDoctrine()->getManager();
         
         $userLessons = $em->getRepository('YawmanTrainingBundle:UserLesson')->findBy(array(), null, 5);
@@ -114,7 +138,6 @@ class DashboardController extends Controller {
 
         $lessonPlans = $em->getRepository('YawmanTrainingBundle:LessonPlan')->findBy(array(), null, 5);
 
-        return $this->render('YawmanTrainingBundle:Dashboard:admin-dashboard.html.twig', array('userLessons' => $userLessons, 'companies' => $companies , 'lessonPlans' => $lessonPlans));
+        return $this->render('YawmanTrainingBundle:Dashboard:application-dashboard.html.twig', array('userLessons' => $userLessons, 'companies' => $companies , 'lessonPlans' => $lessonPlans));
     }
-
 }

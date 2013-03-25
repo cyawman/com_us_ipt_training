@@ -366,7 +366,7 @@ class LessonController extends Controller {
         
         return $this->redirect($this->generateUrl('dashboard'));
     }
-
+    
     /**
      * Creates a form used to delete a Lesson entity
      * 
