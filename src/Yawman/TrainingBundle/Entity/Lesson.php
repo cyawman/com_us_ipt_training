@@ -153,6 +153,11 @@ class Lesson {
         return $this->lessonPlanLessons;
     }
 
+    /**
+     * Generates the URL to the Lesson using the Lesson.path
+     * 
+     * @return string
+     */
     public function generateLessonUrl(){
         return '/uploads/'.$this->path.'/player.html';
     }

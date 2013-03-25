@@ -106,7 +106,6 @@ class DashboardController extends Controller {
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function adminDashboardAction() {
-        
         $em = $this->getDoctrine()->getManager();
         
         $userLessons = $em->getRepository('YawmanTrainingBundle:UserLesson')->findBy(array(), null, 5);

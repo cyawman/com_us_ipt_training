@@ -245,7 +245,7 @@ class LessonController extends Controller {
         
         $activeLesson = $session->get('activeLesson');
         if(!$activeLesson){
-            throw $this->createNotFoundException('Unable to find the Active Lesson entity.');
+            throw $this->createNotFoundException('Unable to find the active Lesson entity.');
         }
         
         $lessonPlanId = $activeLesson['lessonPlanId'];
@@ -276,7 +276,7 @@ class LessonController extends Controller {
         /**
          * Don't penelize a User for retaking a passed Lesson
          */
-        if($userLessonPlan->getPosition() < $lessonPlanLesson->getPosition()){
+        if($userLessonPlan->getPosition() <= $lessonPlanLesson->getPosition()){
             $userLessonPlan->setPosition($lessonPlanLesson->getPosition());
             $em->persist($userLessonPlan);
         }
