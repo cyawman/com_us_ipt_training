@@ -153,8 +153,12 @@ class Lesson {
         return $this->lessonPlanLessons;
     }
 
+    public function generateLessonUrl(){
+        return '/uploads/'.$this->path.'/player.html';
+    }
+    
     public function __toString() {
         return sprintf('%s', $this->name);
     }
-
+    
 }

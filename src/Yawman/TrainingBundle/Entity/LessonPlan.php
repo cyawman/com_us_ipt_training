@@ -39,9 +39,9 @@ class LessonPlan {
     /**
      * @var ArrayCollection
      * 
-     * @ORM\ManyToMany(targetEntity="User", mappedBy="lessonplans")
+     * @ORM\OneToMany(targetEntity="UserLessonPlan", mappedBy="lessonPlan")
      */
-    private $users;
+    private $userLessonPlans;
 
     /**
      * @var ArrayCollection
@@ -52,7 +52,7 @@ class LessonPlan {
 
     public function __construct() {
         $this->lessonPlanLessons = new ArrayCollection();
-        $this->users = new ArrayCollection();
+        $this->userLessonPlans = new ArrayCollection();
     }
 
     /**
@@ -104,33 +104,33 @@ class LessonPlan {
     }
 
     /**
-     * Add users
+     * Add user lesson plans
      *
-     * @param \Yawman\TrainingBundle\Entity\User $users
+     * @param \Yawman\TrainingBundle\Entity\UserLessonPlan $userLessonPlans
      * @return LessonPlan
      */
-    public function addUser(\Yawman\TrainingBundle\Entity\User $users) {
-        $this->users[] = $users;
+    public function addUserLessonPlan(\Yawman\TrainingBundle\Entity\UserLessonPlan $userLessonPlans) {
+        $this->userLessonPlans[] = $userLessonPlans;
 
         return $this;
     }
 
     /**
-     * Remove users
+     * Remove user lesson plan
      *
-     * @param \Yawman\TrainingBundle\Entity\User $users
+     * @param \Yawman\TrainingBundle\Entity\UserLessonPlan $userLessonPlans
      */
-    public function removeUser(\Yawman\TrainingBundle\Entity\User $users) {
-        $this->users->removeElement($users);
+    public function removeUserLessonPan(\Yawman\TrainingBundle\Entity\UserLessonPlan $userLessonPlans) {
+        $this->userLessonPlans->removeElement($userLessonPlans);
     }
 
     /**
-     * Get users
+     * Get user lesson plans
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getUsers() {
-        return $this->users;
+    public function getUserLessonPlans() {
+        return $this->userLessonPlans;
     }
 
     /**

@@ -67,10 +67,10 @@ class User implements AdvancedUserInterface, \Serializable {
     private $groups;
 
     /**
-     * @ORM\ManyToMany(targetEntity="LessonPlan", inversedBy="users")
+     * @ORM\OneToMany(targetEntity="UserLessonPlan", mappedBy="user")
      *
      */
-    private $lessonplans;
+    private $userLessonPlans;
 
     /**
      * @ORM\ManyToOne(targetEntity="Company", inversedBy="users")
@@ -82,7 +82,7 @@ class User implements AdvancedUserInterface, \Serializable {
         $this->isActive = true;
         $this->salt = md5(uniqid(null, true));
         $this->groups = new ArrayCollection();
-        $this->lessonplans = new ArrayCollection();
+        $this->userLessonPlans = new ArrayCollection();
     }
 
     /**
@@ -319,33 +319,33 @@ class User implements AdvancedUserInterface, \Serializable {
     }
 
     /**
-     * Add lessonplans
+     * Add user lesson plans
      *
-     * @param \Yawman\TrainingBundle\Entity\LessonPlan $lessonplans
+     * @param \Yawman\TrainingBundle\Entity\UserLessonPlan $userLessonPlans
      * @return User
      */
-    public function addLessonplan(\Yawman\TrainingBundle\Entity\LessonPlan $lessonplans) {
-        $this->lessonplans[] = $lessonplans;
+    public function addLessonplan(\Yawman\TrainingBundle\Entity\UserLessonPlan $userLessonplans) {
+        $this->userLessonPlans[] = $userLessonPlans;
 
         return $this;
     }
 
     /**
-     * Remove lessonplans
+     * Remove user LessonPlans
      *
-     * @param \Yawman\TrainingBundle\Entity\LessonPlan $lessonplans
+     * @param \Yawman\TrainingBundle\Entity\UserLessonPlan $userLessonPlans
      */
-    public function removeLessonplan(\Yawman\TrainingBundle\Entity\LessonPlan $lessonplans) {
-        $this->plans->removeElement($lessonplans);
+    public function removeLessonplan(\Yawman\TrainingBundle\Entity\UserLessonPlan $userLessonPlans) {
+        $this->userLessonPlans->removeElement($userLessonPlans);
     }
 
     /**
-     * Get lessonplans
+     * Get user lessonplans
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getLessonplans() {
-        return $this->lessonplans;
+    public function getUserLessonplans() {
+        return $this->userLessonPlans;
     }
 
     /**

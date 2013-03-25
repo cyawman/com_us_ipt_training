@@ -5,6 +5,9 @@
     #    RewriteBase /
     #</IfModule>
 
+    RewriteCond %{DOCUMENT_ROOT}/uploads%{REQUEST_URI} -f
+    RewriteRule ^(.*)$ /uploads%{REQUEST_URI} [PT,L]
+
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^(.*)$ app.php [QSA,L]
 </IfModule>

@@ -12,6 +12,10 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class UserLesson {
     
+    const PASS = 'pass';
+    const FAIL = 'fail';
+    const INCOMPLETE = 'incomplete';
+    
     /**
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="User")
