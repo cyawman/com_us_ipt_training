@@ -7,9 +7,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 
 /**
+ * User
+ * 
  * @ORM\Table(name="users")
  * @ORM\HasLifecycleCallbacks
  * @ORM\Entity(repositoryClass="Yawman\TrainingBundle\Entity\UserRepository")
+ * 
+ * @author Chris Yawman
  */
 class User implements AdvancedUserInterface, \Serializable {
 
@@ -51,14 +55,20 @@ class User implements AdvancedUserInterface, \Serializable {
     private $hasLoggedIn = false;
     
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(name="created_at", type="datetime")
      */
-    protected $created_at;
+    protected $createdAt;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(name="modified_at", type="datetime")
      */
-    protected $modified_at;
+    protected $modifiedAt;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="Company", inversedBy="users")
+     * @ORM\JoinColumn(name="company_id", referencedColumnName="id")
+     */
+    private $company;
 
     /**
      * @ORM\ManyToMany(targetEntity="Group", inversedBy="users")
@@ -72,97 +82,11 @@ class User implements AdvancedUserInterface, \Serializable {
      */
     private $userLessonPlans;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Company", inversedBy="users")
-     * @ORM\JoinColumn(name="company_id", referencedColumnName="id")
-     */
-    private $company;
-
     public function __construct() {
         $this->isActive = true;
         $this->salt = md5(uniqid(null, true));
         $this->groups = new ArrayCollection();
         $this->userLessonPlans = new ArrayCollection();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getUsername() {
-        return $this->username;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getEmail() {
-        return $this->email;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getSalt() {
-        return $this->salt;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getPassword() {
-        return $this->password;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function eraseCredentials() {
-        
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getRoles() {
-        return $this->groups->toArray();
-    }
-
-    /**
-     * @see \Serializable::serialize()
-     */
-    public function serialize() {
-        return serialize(array(
-            $this->id,
-        ));
-    }
-
-    /**
-     * @see \Serializable::unserialize()
-     */
-    public function unserialize($serialized) {
-        list (
-                $this->id,
-                ) = unserialize($serialized);
-    }
-
-    public function isAccountNonExpired() {
-        return true;
-    }
-
-    public function isAccountNonLocked() {
-        return true;
-    }
-
-    public function isCredentialsNonExpired() {
-        return true;
-    }
-
-    public function isEnabled() {
-        return $this->isActive;
-    }
-
-    public function __toString() {
-        return sprintf('%s', $this->username);
     }
 
     /**
@@ -173,7 +97,14 @@ class User implements AdvancedUserInterface, \Serializable {
     public function getId() {
         return $this->id;
     }
-
+    
+    /**
+     * @inheritDoc
+     */
+    public function getUsername() {
+        return $this->username;
+    }
+    
     /**
      * Set username
      *
@@ -187,6 +118,32 @@ class User implements AdvancedUserInterface, \Serializable {
     }
 
     /**
+     * @inheritDoc
+     */
+    public function getEmail() {
+        return $this->email;
+    }
+    
+    /**
+     * Set email
+     *
+     * @param string $email
+     * @return User
+     */
+    public function setEmail($email) {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getSalt() {
+        return $this->salt;
+    }
+    
+    /**
      * Set salt
      *
      * @param string $salt
@@ -196,6 +153,13 @@ class User implements AdvancedUserInterface, \Serializable {
         $this->salt = $salt;
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getPassword() {
+        return $this->password;
     }
 
     /**
@@ -211,17 +175,14 @@ class User implements AdvancedUserInterface, \Serializable {
     }
 
     /**
-     * Set email
+     * Get isActive
      *
-     * @param string $email
-     * @return User
+     * @return boolean 
      */
-    public function setEmail($email) {
-        $this->email = $email;
-
-        return $this;
+    public function getIsActive() {
+        return $this->isActive;
     }
-
+    
     /**
      * Set isActive
      *
@@ -233,40 +194,124 @@ class User implements AdvancedUserInterface, \Serializable {
 
         return $this;
     }
-
-    /**
-     * Get isActive
-     *
-     * @return boolean 
-     */
-    public function getIsActive() {
-        return $this->isActive;
-    }
     
+    /**
+     * Get hasLoggedIn
+     * 
+     * @return boolean
+     */
     public function getHasLoggedIn() {
         return $this->hasLoggedIn;
     }
 
+    /**
+     * Set hasLoggedIn
+     * 
+     * @param boolean $hasLoggedIn
+     */
     public function setHasLoggedIn($hasLoggedIn) {
         $this->hasLoggedIn = $hasLoggedIn;
     }
 
-    public function getCreatedAt() {
-        return $this->created_at;
+    /**
+     * Set company
+     *
+     * @param \Yawman\TrainingBundle\Entity\Company $company
+     * @return User
+     */
+    public function setCompany(\Yawman\TrainingBundle\Entity\Company $company = null) {
+        $this->company = $company;
+
+        return $this;
     }
 
-    public function setCreatedAt($created_at) {
-        $this->created_at = $created_at;
-    }
-
-    public function getModifiedAt() {
-        return $this->modified_at;
-    }
-
-    public function setModifiedAt($modified_at) {
-        $this->modified_at = $modified_at;
+    /**
+     * Get company
+     *
+     * @return \Yawman\TrainingBundle\Entity\Company 
+     */
+    public function getCompany() {
+        return $this->company;
     }
     
+    /**
+     * Get createdAt
+     * 
+     * @return DateTime
+     */
+    public function getCreatedAt() {
+        return $this->createdAt;
+    }
+
+    /**
+     * Set createdAt
+     * 
+     * @param DateTime $createdAt
+     */
+    public function setCreatedAt($createdAt) {
+        $this->createdAt = $createdAt;
+    }
+
+    /**
+     * Get modifiedAt
+     * 
+     * @return DateTime
+     */
+    public function getModifiedAt() {
+        return $this->modifiedAt;
+    }
+
+    /**
+     * Set modifiedAt
+     * 
+     * @param DateTime $modifiedAt
+     */
+    public function setModifiedAt($modifiedAt) {
+        $this->modifiedAt = $modifiedAt;
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function eraseCredentials() {
+        
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getRoles() {
+        return $this->groups->toArray();
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isAccountNonExpired() {
+        return true;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isAccountNonLocked() {
+        return true;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isCredentialsNonExpired() {
+        return true;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isEnabled() {
+        return $this->isActive;
+    }
+
     /**
      * Add groups
      *
@@ -296,35 +341,14 @@ class User implements AdvancedUserInterface, \Serializable {
     public function getGroups() {
         return $this->groups;
     }
-
-    /**
-     * Set company
-     *
-     * @param \Yawman\TrainingBundle\Entity\Company $company
-     * @return User
-     */
-    public function setCompany(\Yawman\TrainingBundle\Entity\Company $company = null) {
-        $this->company = $company;
-
-        return $this;
-    }
-
-    /**
-     * Get company
-     *
-     * @return \Yawman\TrainingBundle\Entity\Company 
-     */
-    public function getCompany() {
-        return $this->company;
-    }
-
+    
     /**
      * Add user lesson plans
      *
      * @param \Yawman\TrainingBundle\Entity\UserLessonPlan $userLessonPlans
      * @return User
      */
-    public function addLessonplan(\Yawman\TrainingBundle\Entity\UserLessonPlan $userLessonplans) {
+    public function addUserLessonPlans(\Yawman\TrainingBundle\Entity\UserLessonPlan $userLessonPlans) {
         $this->userLessonPlans[] = $userLessonPlans;
 
         return $this;
@@ -335,7 +359,7 @@ class User implements AdvancedUserInterface, \Serializable {
      *
      * @param \Yawman\TrainingBundle\Entity\UserLessonPlan $userLessonPlans
      */
-    public function removeLessonplan(\Yawman\TrainingBundle\Entity\UserLessonPlan $userLessonPlans) {
+    public function removeUserLessonplans(\Yawman\TrainingBundle\Entity\UserLessonPlan $userLessonPlans) {
         $this->userLessonPlans->removeElement($userLessonPlans);
     }
 
@@ -349,6 +373,24 @@ class User implements AdvancedUserInterface, \Serializable {
     }
 
     /**
+     * @see \Serializable::serialize()
+     */
+    public function serialize() {
+        return serialize(array(
+            $this->id,
+        ));
+    }
+
+    /**
+     * @see \Serializable::unserialize()
+     */
+    public function unserialize($serialized) {
+        list (
+                $this->id,
+                ) = unserialize($serialized);
+    }
+    
+    /**
      * Now we tell doctrine that before we persist or update we call the updatedTimestamps() function.
      *
      * @ORM\PrePersist
@@ -360,6 +402,15 @@ class User implements AdvancedUserInterface, \Serializable {
         if ($this->getCreatedAt() == null) {
             $this->setCreatedAt(new \DateTime(date('Y-m-d H:i:s')));
         }
+    }
+    
+    /**
+     * Return string of entity
+     * 
+     * @return string
+     */
+    public function __toString() {
+        return sprintf('%s', $this->username);
     }
     
 }

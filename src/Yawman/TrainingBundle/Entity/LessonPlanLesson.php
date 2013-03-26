@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * LessonPlanLesson
  *
  * @ORM\Table(name="lessonplan_lesson")
+ * @ORM\HasLifecycleCallbacks
  * @ORM\Entity(repositoryClass="Yawman\TrainingBundle\Entity\LessonPlanLessonRepository")
  */
 class LessonPlanLesson {
@@ -28,6 +29,16 @@ class LessonPlanLesson {
      * @ORM\Column(type="integer") 
      */
     private $position = 0;
+    
+   /**
+     * @ORM\Column(name="created_at", type="datetime")
+     */
+    protected $createdAt;
+
+    /**
+     * @ORM\Column(name="modified_at", type="datetime")
+     */
+    protected $modifiedAt;
     
     /**
      * Get the LessonPlan entity
@@ -81,5 +92,55 @@ class LessonPlanLesson {
      */
     public function setPosition($position) {
         $this->position = $position;
+    }
+    
+    /**
+     * Get createdAt
+     * 
+     * @return DateTime
+     */
+    public function getCreatedAt() {
+        return $this->createdAt;
+    }
+
+    /**
+     * Set createdAt
+     * 
+     * @param DateTime $createdAt
+     */
+    public function setCreatedAt($createdAt) {
+        $this->createdAt = $createdAt;
+    }
+
+    /**
+     * Get modifiedAt
+     * 
+     * @return DateTime
+     */
+    public function getModifiedAt() {
+        return $this->modifiedAt;
+    }
+
+    /**
+     * Set modifiedAt
+     * 
+     * @param DateTime $modifiedAt
+     */
+    public function setModifiedAt($modifiedAt) {
+        $this->modifiedAt = $modifiedAt;
+    }
+    
+    /**
+     * Now we tell doctrine that before we persist or update we call the updatedTimestamps() function.
+     *
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function updateTimestamps() {
+        $this->setModifiedAt(new \DateTime(date('Y-m-d H:i:s')));
+
+        if ($this->getCreatedAt() == null) {
+            $this->setCreatedAt(new \DateTime(date('Y-m-d H:i:s')));
+        }
     }
 }

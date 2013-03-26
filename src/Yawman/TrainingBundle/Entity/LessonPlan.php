@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * Lesson Plan
  *
  * @ORM\Table(name="lessonplan")
+ * @ORM\HasLifecycleCallbacks
  * @ORM\Entity
  */
 class LessonPlan {
@@ -35,6 +36,16 @@ class LessonPlan {
      * @ORM\Column(name="description", type="string", length=255, nullable=false)
      */
     private $description;
+    
+    /**
+     * @ORM\Column(name="created_at", type="datetime")
+     */
+    protected $createdAt;
+
+    /**
+     * @ORM\Column(name="modified_at", type="datetime")
+     */
+    protected $modifiedAt;
 
     /**
      * @var ArrayCollection
@@ -102,6 +113,42 @@ class LessonPlan {
     public function setDescription($description) {
         $this->description = $description;
     }
+    
+    /**
+     * Get createdAt
+     * 
+     * @return DateTime
+     */
+    public function getCreatedAt() {
+        return $this->createdAt;
+    }
+
+    /**
+     * Set createdAt
+     * 
+     * @param DateTime $createdAt
+     */
+    public function setCreatedAt($createdAt) {
+        $this->createdAt = $createdAt;
+    }
+
+    /**
+     * Get modifiedAt
+     * 
+     * @return DateTime
+     */
+    public function getModifiedAt() {
+        return $this->modifiedAt;
+    }
+
+    /**
+     * Set modifiedAt
+     * 
+     * @param DateTime $modifiedAt
+     */
+    public function setModifiedAt($modifiedAt) {
+        $this->modifiedAt = $modifiedAt;
+    }
 
     /**
      * Add user lesson plans
@@ -163,6 +210,25 @@ class LessonPlan {
         return $this->lessonPlanLessons;
     }
 
+    /**
+     * Now we tell doctrine that before we persist or update we call the updatedTimestamps() function.
+     *
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function updateTimestamps() {
+        $this->setModifiedAt(new \DateTime(date('Y-m-d H:i:s')));
+
+        if ($this->getCreatedAt() == null) {
+            $this->setCreatedAt(new \DateTime(date('Y-m-d H:i:s')));
+        }
+    }
+    
+    /**
+     * Return a string of the entity
+     * 
+     * @return string
+     */
     public function __toString() {
         return sprintf('%s', $this->name);
     }

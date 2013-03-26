@@ -3,11 +3,14 @@
 namespace Yawman\TrainingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Yawman\TrainingBundle\Entity\User;
+use Yawman\TrainingBundle\Entity\Lesson;
 
 /**
  * UserLesson
  *
  * @ORM\Table(name="user_lesson")
+ * @ORM\HasLifecycleCallbacks
  * @ORM\Entity(repositoryClass="Yawman\TrainingBundle\Entity\UserLessonRepository")
  */
 class UserLesson {
@@ -33,30 +36,15 @@ class UserLesson {
      */
     private $status;
     
-    
+    /**
+     * @ORM\Column(name="created_at", type="datetime")
+     */
+    protected $createdAt;
 
     /**
-     * Set status
-     *
-     * @param string $status
-     * @return UserLesson
+     * @ORM\Column(name="modified_at", type="datetime")
      */
-    public function setStatus($status)
-    {
-        $this->status = $status;
-    
-        return $this;
-    }
-
-    /**
-     * Get status
-     *
-     * @return string 
-     */
-    public function getStatus()
-    {
-        return $this->status;
-    }
+    protected $modifiedAt;
 
     /**
      * Set user
@@ -64,7 +52,7 @@ class UserLesson {
      * @param \Yawman\TrainingBundle\Entity\User $user
      * @return UserLesson
      */
-    public function setUser(\Yawman\TrainingBundle\Entity\User $user)
+    public function setUser(User $user)
     {
         $this->user = $user;
     
@@ -87,7 +75,7 @@ class UserLesson {
      * @param \Yawman\TrainingBundle\Entity\Lesson $lesson
      * @return UserLesson
      */
-    public function setLesson(\Yawman\TrainingBundle\Entity\Lesson $lesson)
+    public function setLesson(Lesson $lesson)
     {
         $this->lesson = $lesson;
     
@@ -102,5 +90,78 @@ class UserLesson {
     public function getLesson()
     {
         return $this->lesson;
+    }
+    
+    /**
+     * Set status
+     *
+     * @param string $status
+     * @return UserLesson
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+    
+        return $this;
+    }
+
+    /**
+     * Get status
+     *
+     * @return string 
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+    
+    /**
+     * Get createdAt
+     * 
+     * @return DateTime
+     */
+    public function getCreatedAt() {
+        return $this->createdAt;
+    }
+
+    /**
+     * Set createdAt
+     * 
+     * @param DateTime $createdAt
+     */
+    public function setCreatedAt($createdAt) {
+        $this->createdAt = $createdAt;
+    }
+
+    /**
+     * Get modifiedAt
+     * 
+     * @return DateTime
+     */
+    public function getModifiedAt() {
+        return $this->modifiedAt;
+    }
+
+    /**
+     * Set modifiedAt
+     * 
+     * @param DateTime $modifiedAt
+     */
+    public function setModifiedAt($modifiedAt) {
+        $this->modifiedAt = $modifiedAt;
+    }
+    
+    /**
+     * Now we tell doctrine that before we persist or update we call the updatedTimestamps() function.
+     *
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function updateTimestamps() {
+        $this->setModifiedAt(new \DateTime(date('Y-m-d H:i:s')));
+
+        if ($this->getCreatedAt() == null) {
+            $this->setCreatedAt(new \DateTime(date('Y-m-d H:i:s')));
+        }
     }
 }
