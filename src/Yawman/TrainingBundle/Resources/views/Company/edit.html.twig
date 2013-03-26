@@ -1,32 +1,21 @@
 {% extends "::admin.html.twig" %}
 
-{% block title %}Company Edit{% endblock %}
+{% block headTitle %}Company Edit{% endblock %}
+
+{% block bodyTitle %}Edit: {{ entity.name }}{% endblock %}
 
 {% block content %}
-<h1>Company Edit</h1>
-
-{% if app.session.hasFlash('success') %}
-    <div class="alert alert-success">
-        {{ app.session.flash('success') }}
+<div class="row-fluid">
+    <div class="span7">
+        <p class="lead">Changing the Name of the Company is harmless.</p>
+        <form action="{{ path('company_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
+            {{ form_widget(edit_form) }}
+            <p>
+                <button class="btn btn-primary" type="submit">Rename</button>
+            </p>
+        </form>
+        <a href="{{ path('company') }}"><i class="icon-backward"></i> Back to the list</a>
     </div>
-{% endif %}
-
-{% if app.session.hasFlash('error') %}
-    <div class="alert alert-error">
-        {{ app.session.flash('error') }}
-    </div>
-{% endif %}
-
-<form action="{{ path('company_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
-    {{ form_widget(edit_form) }}
-    <p>
-        <button class="btn btn-primary" type="submit">Edit</button>
-    </p>
-</form>
-
-<form action="{{ path('company_delete', { 'id': entity.id }) }}" method="post">
-    {{ form_widget(delete_form) }}
-    <button class="btn btn-danger" type="submit">Delete</button>
-</form>
-<a href="{{ path('company') }}">Back to the list</a>
+    <div class="span5"></div>
+</div>
 {% endblock %}

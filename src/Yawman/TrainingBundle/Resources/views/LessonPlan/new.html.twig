@@ -1,10 +1,10 @@
 {% extends "::admin.html.twig" %}
 
-{% block title %}Lesson Plan Creation{% endblock %}
+{% block headTitle %}Lesson Plan Creation{% endblock %}
+
+{% block bodyTitle %}<h1>LessonPlan creation</h1>{% endblock %}
 
 {% block content %}
-<h1>LessonPlan creation</h1>
-
 <form action="{{ path('lessonplan_create') }}" method="post" {{ form_enctype(form) }}>
     {{ form_widget(form) }}
     <p>

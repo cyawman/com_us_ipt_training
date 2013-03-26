@@ -1,42 +1,74 @@
 {% extends "::admin.html.twig" %}
 
-{% block title %}Company{% endblock %}
+{% block headTitle %}Company{% endblock %}
+
+{% block bodyTitle %}<h1>{{ entity.name }}</h1>{% endblock %}
 
 {% block content %}
-<h1>{{ entity.name }}</h1>
-
 <div class="row-fluid">
-    <div class="span9">
-        <table class="table table-bordered table-striped">
+    <div class="span7">
+        <p class="lead">A Company is simply an ID and a Name.</p>
+        <p>When a Company is created it automatically generates an ID. The ID can never be changed. You can change the Name of a Company as many times as you want.</p>
+        <table class="table table-bordered table-striped table-hover">
             <tbody>
                 <tr>
-                    <th>Id</th>
+                    <th>ID</th>
                     <td>{{ entity.id }}</td>
                 </tr>
                 <tr>
                     <th>Name</th>
                     <td>{{ entity.name }}</td>
                 </tr>
+                <tr>
+                    <th>Users</th>
+                    <td>{{ entity.users|length }}</td>
+                </tr>
             </tbody>
         </table>
+        {% if entity.users %}
+            <p>Users are assigned to a Company. Users can be added and removed from a Company without affecting the Users attributes. Click the Edit Company button below to add a User.</p>
+            <table class="table table-bordered table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Role</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in entity.users %}
+                        <tr>
+                            <td>{{ user.email }}</td>
+                            <td>
+                                {% for group in user.groups %}
+                                    {{ group.name|capitalize }}
+                                {% endfor %}
+                            </td>
+                            <td>
+                                <a href="{{ path("company_remove_user", {"companyId": entity.id, "userId": user.id }) }}">Remove</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+        <p>
+            <a class="btn btn-primary" href="{{ path('company_edit', { 'id': entity.id }) }}"><i class="icon-wrench icon-white"></i> Edit Company</a>
+        </p>
+        <p>
+            <form action="{{ path('company_delete', { 'id': entity.id }) }}" method="post">
+                {{ form_widget(delete_form) }}
+                <button class="btn btn-danger" type="submit"><i class="icon-minus-sign icon-white"></i> Delete Company</button>
+            </form>
+        </p>
+        <p>
+            <a href="{{ path('company') }}"><i class="icon-backward"></i> Back to the Company list</a>
+        </p>
     </div>
-    <div class="span3">
+    <div class="span5">
+        <h2>Deleting a Company?</h2>
         <div class="well">
-            <h3>Common Tasks</h3>
-            <ul class="record_actions">
-            <li>
-                <a href="{{ path('company') }}">Back to the list</a>
-            </li>
-            <li>
-                <a href="{{ path('company_edit', { 'id': entity.id }) }}">Edit</a>
-            </li>
-            <li>
-                <form action="{{ path('company_delete', { 'id': entity.id }) }}" method="post">
-            {{ form_widget(delete_form) }}
-                        <button type="submit">Delete</button>
-                    </form>
-                </li>
-            </ul>
+            <p>Deleting a Company does not delete the Users from the System. All of the Users will simply exist without being assigned to a Company. Deleting a Company is not necessary in most cases.</p><p>If you want to prevent all Users in a Company from accessing the System then simply Disable the Company (coming soon). This way you can re-enable the Company and its Users with little effort.</p>
         </div>
     </div>
 </div>

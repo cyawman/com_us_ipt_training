@@ -1,11 +1,14 @@
 {% extends "::admin.html.twig" %}
 
-{% block title %}Lesson Plan Edit Lessons{% endblock %}
+{% block headTitle %}Lesson Plan Edit Lessons{% endblock %}
 
-{% block content %}
+{% block bodyTitle %}
 <div class="row-fluid">
     <div class="span12"><h1>{{ lesson_plan.name }}</h1></div>
 </div>
+{% endblock %}
+
+{% block content %}
 <div class="row-fluid">
     <div class="span8">
         <section>

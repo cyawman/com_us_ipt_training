@@ -1,13 +1,11 @@
 {% extends "::default.html.twig" %}
 
-{% block title %}Login{% endblock %}
+{% block headTitle %}Login{% endblock %}
 
 {% block content %}
     {% if error %}
         <div>{{ error.message }}</div>
     {% endif %}
-     
-
     <form class="form-signin" action="{{ path('login_check') }}" method="post">
         <h2>Please Sign In</h2>
             <input type="text" class="input-block-level" id="username" name="_username" value="{{ last_username }}" placeholder="Username" />

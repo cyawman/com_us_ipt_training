@@ -1,29 +1,43 @@
 {% extends "::admin.html.twig" %}
 
-{% block title %}Company List{% endblock %}
+{% block headTitle %}Company List{% endblock %}
+
+{% block bodyTitle %}Company List{% endblock %}
 
 {% block content %}
-<h1>Company list</h1>
-
-<table class="table table-striped table-hover table-condensed">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-    {% for entity in entities %}
-        <tr>
-            <td><a href="{{ path('company_show', { 'id': entity.id }) }}">{{ entity.name }}</a></td>
-            <td>
-                <a href="{{ path('company_show', { 'id': entity.id }) }}"><i class="icon-eye-open"></i> View</a><br />
-                <a href="{{ path('company_edit', { 'id': entity.id }) }}"><i class="icon-wrench"></i> Edit</a>
-            </td>
-        </tr>
-    {% endfor %}
-    </tbody>
-</table>
-
-<a class="btn btn-primary" href="{{ path('company_new') }}"><i class="icon-briefcase icon-white"></i> Create Company</a>
+<div class="row-fluid">
+    <div class="span7">
+        <p class="lead">A listing of all the companies in the system. Each User is assigned to a Company.</p>
+        <p>Checkout the Company Dashboard to view its recent User activity. You can see all Users in a company by clicking on the Details. Click on Edit to change the name of the Company.</p>
+        <table class="table table-striped table-hover table-condensed table-bordered">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for entity in entities %}
+                <tr>
+                    <td><a href="{{ path('company_show', { 'id': entity.id }) }}">{{ entity.name }}</a></td>
+                    <td>
+                        <a href="{{ path('company_dashboard', { 'id': entity.id }) }}"><i class="icon-list-alt"></i> Dashboard</a><br />
+                        <a href="{{ path('company_show', { 'id': entity.id }) }}"><i class="icon-eye-open"></i> Details</a><br />
+                        <a href="{{ path('company_edit', { 'id': entity.id }) }}"><i class="icon-wrench"></i> Edit</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <a class="btn btn-primary" href="{{ path('company_new') }}"><i class="icon-briefcase icon-white"></i> Create a New Company</a>
+    </div>
+    <div class="span5">
+        <section>
+            <header><h2>Company Users</h2></header>
+            <div class="well">
+                <p>All Users in the System must belong to a Company. You must create the Company before you create the Users.</p>
+            </div>
+        </section>
+    </div>
+</div>
 {% endblock %}

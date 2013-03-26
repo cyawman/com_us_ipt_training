@@ -1,16 +1,41 @@
 {% extends "::admin.html.twig" %}
 
-{% block title %}Company Creation{% endblock %}
+{% block headTitle %}Company Creation{% endblock %}
+
+{% block bodyTitle %}Create a New Company{% endblock %}
 
 {% block content %}
-<h1>Create Company</h1>
-
-<form action="{{ path('company_create') }}" method="post" {{ form_enctype(form) }}>
-    {{ form_widget(form) }}
-    <p>
-        <button class="btn btn-primary" type="submit">Create</button>
-    </p>
-</form>
-
-<a href="{{ path('company') }}">Back to the list</a>
+<div class="row-fluid">
+    <div class="span7">
+        <p class="lead">Add a new Company to the system for a custom experience.</p>
+        <p>After you create the Company you can assign Users. Remember, Lesson Plans are assigned by User. However, you can assign the same Lesson Plan to all Users in a Company.</p>
+        <form action="{{ path('company_create') }}" method="post" {{ form_enctype(form) }}>
+            {{ form_widget(form) }}
+            <p>
+                <button class="btn btn-primary" type="submit"><i class="icon-plus-sign icon-white"></i> Create</button>
+            </p>
+        </form>
+        <a href="{{ path('company') }}">Back to the list</a>
+    </div>
+    <div class="span5">
+        <section>
+            <header><h2>Naming Tips</h2></header>
+            <div class="well">
+                <p>You can name the Company whatever you want. Remember, the User can see their Company name so name it appropriately. You can use letters, numbers and special characters. Try to be consistent and avoid acronyms and abbreviations.</p>
+                <p>Bad Names:</p>
+                <ul>
+                    <li>IPT</li>
+                    <li>Harry's Teeter</li>
+                    <li>whole_foods</li>
+                </ul>
+                <p>Good Names:</p>
+                <ul>
+                    <li>International Produce Training</li>
+                    <li>Harris Teeter</li>
+                    <li>Whole Foods</li>
+                </ul>
+            </div>
+        </section>
+    </div>
+</div>
 {% endblock %}

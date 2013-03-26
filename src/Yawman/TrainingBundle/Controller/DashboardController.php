@@ -87,15 +87,13 @@ class DashboardController extends Controller {
             throw $this->createNotFoundException('Unable to find User entity.');
         }
         
-        $isCurrentUser = ($user == $this->getUser()) ? true:false;
-        
         if (false === $this->get('security.context')->isGranted('ROLE_MANAGER')) {
-            if (!$isCurrentUser) {
+            if ($user !== $this->getUser()) {
                 throw new AccessDeniedException();
             }
         }
         
-        return $this->render('YawmanTrainingBundle:Dashboard:user-dashboard.html.twig', array('user' => $user, 'isCurrentUser' => $isCurrentUser));
+        return $this->render('YawmanTrainingBundle:Dashboard:user-dashboard.html.twig', array('user' => $user));
     }
 
     /**

@@ -1,11 +1,14 @@
 {% extends "::user.html.twig" %}
 
-{% block title %}User Dashboard{% endblock %}
+{% block headTitle %}User Dashboard{% endblock %}
+
+{% block bodyTitle %}
+<div class="row-fluid">
+    <div class="span12"><h1>Dashboard</h1></div>
+</div>
+{% endblock %}
 
 {% block content %}
-<div class="row-fluid">
-    <div class="span12"><h1>{% if isCurrentUser %}My Dashboard{% else %} Dashboard for {{ user.username }} {% endif %}</h1></div>
-</div>
 <div class="row-fluid">
     <div class="span7">
         <section>

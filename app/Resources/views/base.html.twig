@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>{% block title %}Welcome!{% endblock %}</title>
+        <title>{% block headTitle %}Welcome!{% endblock %}</title>
         {% block stylesheets %}
             <link href="{{ asset('bundles/yawmantraining/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
             <link href="{{ asset('bundles/yawmantraining/css/bootstrap-responsive.min.css') }}" rel="stylesheet" type="text/css" />
@@ -45,32 +45,41 @@
                 </div>
             </div>
         </div>
-        {% block flashes %}
-            <div class="container">
-            {% if app.session.hasFlash('error') %}
-                <div class="alert alert-error">
-                    {{ app.session.flash('error') }}
-                </div>
-            {% endif %}
-            {% if app.session.hasFlash('warning') %}
-                <div class="alert">
-                    {{ app.session.flash('warning') }}
-                </div>
-            {% endif %}
-            {% if app.session.hasFlash('info') %}
-                <div class="alert alert-info">
-                    {{ app.session.flash('info') }}
-                </div>
-            {% endif %}
-            {% if app.session.hasFlash('success') %}
-                <div class="alert alert-success">
-                    {{ app.session.flash('success') }}
-                </div>
-            {% endif %}
-            </div>
-        {% endblock %}
         {% block body %}
-            {% block content %}{% endblock %}
+            <div class="container">
+                <div class="row-fluid">
+                    <div class="span12"><h1>{% block bodyTitle %}{% endblock %}</h1></div>
+                </div>
+                {% if app.session.hasFlash('error') or app.session.hasFlash('warning') or app.session.hasFlash('info') or app.session.hasFlash('success') %}
+                    <div class="row-fluid">
+                        <div class="span12">
+                            <div class="container">
+                            {% if app.session.hasFlash('error') %}
+                                <div class="alert alert-error">
+                                    {{ app.session.flash('error') }}
+                                </div>
+                            {% endif %}
+                            {% if app.session.hasFlash('warning') %}
+                                <div class="alert">
+                                    {{ app.session.flash('warning') }}
+                                </div>
+                            {% endif %}
+                            {% if app.session.hasFlash('info') %}
+                                <div class="alert alert-info">
+                                    {{ app.session.flash('info') }}
+                                </div>
+                            {% endif %}
+                            {% if app.session.hasFlash('success') %}
+                                <div class="alert alert-success">
+                                    {{ app.session.flash('success') }}
+                                </div>
+                            {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                {% block content %}{% endblock %}
+            </div>
         {% endblock %}
         {% block javascripts %}
             <script src="{{ asset('bundles/yawmantraining/js/jquery-1.9.1.min.js') }}" type="text/javascript"></script>

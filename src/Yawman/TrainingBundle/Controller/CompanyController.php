@@ -207,6 +207,37 @@ class CompanyController extends Controller {
 
         return $this->redirect($this->generateUrl('company'));
     }
+    
+    /**
+     * @Secure(roles="ROLE_MANAGER")
+     * @Route("/{companyId}/remove-user/{userId}", requirements={"companyId" = "\d+", "userId" = "\d+"}, name="company_remove_user")
+     * @param int $companyId
+     * @param int $userId
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     */
+    public function removeUserAction($companyId, $userId){
+        $em = $this->getDoctrine()->getEntityManager();
+        
+        $company = $em->getRepository('YawmanTrainingBundle:Company')->find($companyId);
+        if(!$company){
+            throw $this->createNotFoundException('Unable to find Company entity.');
+        }
+        
+        $user = $em->getRepository('YawmanTrainingBundle:User')->find($userId);
+        if(!$user){
+            throw $this->createNotFoundException('Unable to find User entity.');
+        }
+        
+        $user->setCompany(null);
+        
+        $em->persist($user);
+        $em->flush();
+        
+        $this->get('session')->setFlash('success', 'The update was successful!');
+        
+        return $this->redirect($this->generateUrl('company_show', array("id" => $companyId)));
+    }
 
     /**
      * Provides a form used to delete a Company entity

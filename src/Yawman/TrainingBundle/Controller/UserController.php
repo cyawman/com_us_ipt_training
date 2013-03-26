@@ -220,11 +220,13 @@ class UserController extends Controller {
             if ($editForm->isValid()) {
                 $data = $editForm->getData();
 
-                if ($em->getRepository('YawmanTrainingBundle:User')->findOneBy(array('email' => $data->getEmail()))) {
-                    $editForm->addError(new FormError('This email address is already in use.'));
-                    throw new DuplicateEntryException('Email address must be unique');
+                if($entity->getEmail() !== $data->getEmail()){
+                    if ($em->getRepository('YawmanTrainingBundle:User')->findOneBy(array('email' => $data->getEmail()))) {
+                        $editForm->addError(new FormError('This email address is already in use.'));
+                        throw new DuplicateEntryException('Email address must be unique');
+                    }
                 }
-
+                
                 $em->persist($entity);
                 $em->flush();
 

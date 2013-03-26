@@ -447,7 +447,7 @@ class LessonPlanController extends Controller {
      * 
      * @param LessonPlanLesson $lessonPlanLesson
      */
-    private function repositionLessons(LessonPlanLesson $lessonPlan) {
+    private function repositionLessons(LessonPlan $lessonPlan) {
         $em = $this->getDoctrine()->getManager();
 
         $lessonPlanLessons = $em->getRepository('YawmanTrainingBundle:LessonPlanLesson')->findBy(array('lessonPlan' => $lessonPlan), array('position' => 'ASC'));

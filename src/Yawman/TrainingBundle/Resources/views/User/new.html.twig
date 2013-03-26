@@ -1,10 +1,10 @@
 {% extends "::admin.html.twig" %}
 
-{% block title %}User Creation{% endblock %}
+{% block headTitle %}User Creation{% endblock %}
+
+{% block bodyTitle %}<h1>User creation</h1>{% endblock %}
 
 {% block content %}
-<h1>User creation</h1>
-
 <form action="{{ path('user_create') }}" method="post" {{ form_enctype(form) }}>
     {% if form.get('errors') is not empty %}
     <div class="alert alert-error alert-block">{{ form_errors(form) }}</div>
