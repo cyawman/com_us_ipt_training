@@ -87,15 +87,15 @@ class DashboardController extends Controller {
             throw $this->createNotFoundException('Unable to find User entity.');
         }
         
+        $isCurrentUser = ($user == $this->getUser()) ? true:false;
+        
         if (false === $this->get('security.context')->isGranted('ROLE_MANAGER')) {
-            if ($user->getId() !== $this->getUser()->getId()) {
+            if (!$isCurrentUser) {
                 throw new AccessDeniedException();
             }
         }
         
-        $userLessonPlans = $em->getRepository('YawmanTrainingBundle:UserLessonPlan')->findBy(array('user' => $user));
-
-        return $this->render('YawmanTrainingBundle:Dashboard:user-dashboard.html.twig', array('user' => $user, 'userLessonPlans' => $userLessonPlans));
+        return $this->render('YawmanTrainingBundle:Dashboard:user-dashboard.html.twig', array('user' => $user, 'isCurrentUser' => $isCurrentUser));
     }
 
     /**
@@ -113,17 +113,17 @@ class DashboardController extends Controller {
             throw $this->createNotFoundException('Unable to find Company entity.');
         }
         
+        $isCompanyUser = ($company == $this->getUser()->getCompany()) ? true:false;
+        
         if (false === $this->get('security.context')->isGranted('ROLE_ADMIN')) {
-            if ($company !== $this->getUser()->getCompany()) {
+            if (!$isCompanyUser) {
                 throw new AccessDeniedException();
             }
         }
         
-        $userLessons = $em->getRepository('YawmanTrainingBundle:UserLesson')->findByCompanyUsers($company);
+        $recentUserActivity = $em->getRepository('YawmanTrainingBundle:UserLesson')->findByCompanyUsers($company);
         
-        $myLessonPlans = $em->getRepository('YawmanTrainingBundle:UserLessonPlan')->findBy(array('user' => $this->getUser()));
-        
-        return $this->render('YawmanTrainingBundle:Dashboard:company-dashboard.html.twig', array('user_lessons' => $userLessons, 'my_lesson_plans' => $myLessonPlans, 'user' => $this->getUser()));
+        return $this->render('YawmanTrainingBundle:Dashboard:company-dashboard.html.twig', array('recentUserActivity' => $recentUserActivity, 'user' => $this->getUser(), 'isCompanyUser' => $isCompanyUser));
     }
 
     /**
@@ -136,12 +136,12 @@ class DashboardController extends Controller {
     public function applicationDashboardAction() {
         $em = $this->getDoctrine()->getManager();
         
-        $userLessons = $em->getRepository('YawmanTrainingBundle:UserLesson')->findBy(array(), null, 5);
+        $recentUserActivity = $em->getRepository('YawmanTrainingBundle:UserLesson')->findBy(array(), null, 5);
         
         $companies = $em->getRepository('YawmanTrainingBundle:Company')->findBy(array(), null, 5);
 
         $lessonPlans = $em->getRepository('YawmanTrainingBundle:LessonPlan')->findBy(array(), null, 5);
 
-        return $this->render('YawmanTrainingBundle:Dashboard:application-dashboard.html.twig', array('userLessons' => $userLessons, 'companies' => $companies , 'lessonPlans' => $lessonPlans));
+        return $this->render('YawmanTrainingBundle:Dashboard:application-dashboard.html.twig', array('recentUserActivity' => $recentUserActivity, 'companies' => $companies , 'lessonPlans' => $lessonPlans));
     }
 }

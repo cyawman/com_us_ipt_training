@@ -11,7 +11,7 @@
         <!-- Recent User Activity -->
         <section>
             <header><h2>Recent User Activity</h2></header>
-            {% if user_lessons %}
+            {% if recentUserActivity %}
                 <table class="table table-bordered table-hover table-striped">
                     <thead>
                         <tr>
@@ -21,7 +21,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                    {% for entity in user_lessons %}
+                    {% for entity in recentUserActivity %}
                         <tr>
                             <td><a href="{{ path('user_dashboard', { 'id': entity.user.id }) }}">{{ entity.user.email }}</a></td>
                             <td><a href="{{ path('lesson_show', { 'id': entity.lesson.id }) }}">{{ entity.lesson.name }}</a></td>
@@ -57,42 +57,18 @@
         </section>
     </div>
 </div>
+{% if isCompanyUser %}
 <div class="row-fluid">
     <div class="span7">
         <!-- Lesson Plans -->
         <section>
-            <header><h2>My Lesson Plans</h2></header>
-            {% if my_lesson_plans %}
-                {% for lessonPlan in my_lesson_plans %}
-                    <table class="table table-bordered table-hover table-striped">
-                        <caption>{{ lessonPlan.lessonPlan.name|upper }}</caption>
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Description</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                             {% for lessonPlanLesson in lessonPlan.lessonPlan.lessonPlanLessons %}
-                                <tr>
-                                    <td>{{ lessonPlanLesson.lesson.name }}</td>
-                                    <td>{{ lessonPlanLesson.lesson.description }}</td>
-                                    <td>{% render url('user_lesson_status', {'userId': user.id, 'lessonId':lessonPlanLesson.lesson.id}) %}</td>
-                                    <td><a href="{{ path('lesson_play', { 'lessonPlanId': lessonPlanLesson.lessonPlan.id, 'lessonId': lessonPlanLesson.lesson.id }) }}"><i class="icon-play"></i> Play</a></td>
-                                </tr>
-                             {% endfor %}
-                        </tbody>
-                    </table>
-                {% endfor %}
-            {% else %}
-                <div class="well well-small">No Lesson Plans. <a href="{{ path('lessonplan_new') }}">Create a new Lesson Plan</a></div>
-            {% endif %}
+            <header><h2>My Lessons</h2></header>
+            {% render url('user_lesson_plans_for_user', {'userId': user.id}) %}
         </section>
     </div>
     <div class="span5">
         
     </div>
 </div>
+{% endif %}
 {% endblock %}

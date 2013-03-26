@@ -38,7 +38,7 @@ class UserLessonController extends Controller {
         
         $userLesson = $em->getRepository('YawmanTrainingBundle:UserLesson')->findOneBy(array('user' => $user, 'lesson' => $lesson));
         
-        return $this->render('YawmanTrainingBundle:UserLesson:status.html.twig', array('user_lesson' => $userLesson));
+        return $this->render('YawmanTrainingBundle:UserLesson:_status.html.twig', array('user_lesson' => $userLesson));
     }
     
 }

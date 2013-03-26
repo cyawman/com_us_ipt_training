@@ -11,7 +11,7 @@
         <!-- Recent User Activity -->
         <section>
             <header><h2>Recent User Activity</h2></header>
-            {% if userLessons %}
+            {% if recentUserActivity %}
                 <table class="table table-bordered table-hover table-striped">
                     <thead>
                         <tr>
@@ -21,7 +21,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                    {% for entity in userLessons %}
+                    {% for entity in recentUserActivity %}
                         <tr>
                             <td><a href="{{ path('user_dashboard', { 'id': entity.user.id }) }}">{{ entity.user.email }}</a></td>
                             <td><a href="{{ path('lesson_show', { 'id': entity.lesson.id }) }}">{{ entity.lesson.name }}</a></td>

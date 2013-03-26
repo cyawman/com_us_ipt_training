@@ -1,0 +1,27 @@
+{% if userLessonPlans %}
+    {% for userLessonPlan in userLessonPlans %}
+        <table class="table table-bordered table-hover table-striped">
+            <caption>{{ userLessonPlan.lessonPlan.name|upper }}</caption>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                 {% for lessonPlanLesson in userLessonPlan.lessonPlan.lessonPlanLessons %}
+                    <tr>
+                        <td>{{ lessonPlanLesson.lesson.name }}</td>
+                        <td>{{ lessonPlanLesson.lesson.description }}</td>
+                        <td>{% render url('user_lesson_status', {'userId': user.id, 'lessonId':lessonPlanLesson.lesson.id}) %}</td>
+                        <td><a href="{{ path('lesson_play', { 'lessonPlanId': lessonPlanLesson.lessonPlan.id, 'lessonId': lessonPlanLesson.lesson.id }) }}"><i class="icon-play"></i> Play</a></td>
+                    </tr>
+                 {% endfor %}
+            </tbody>
+        </table>
+    {% endfor %}
+{% else %}
+    <div class="well well-small">No Lesson Plans. <a href="{{ path('lessonplan_new') }}">Create a new Lesson Plan</a></div>
+{% endif %}
