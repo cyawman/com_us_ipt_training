@@ -119,7 +119,11 @@ class DashboardController extends Controller {
             }
         }
         
-        return $this->render('YawmanTrainingBundle:Dashboard:company-dashboard.html.twig');
+        $userLessons = $em->getRepository('YawmanTrainingBundle:UserLesson')->findByCompanyUsers($company);
+        
+        $myLessonPlans = $em->getRepository('YawmanTrainingBundle:UserLessonPlan')->findBy(array('user' => $this->getUser()));
+        
+        return $this->render('YawmanTrainingBundle:Dashboard:company-dashboard.html.twig', array('user_lessons' => $userLessons, 'my_lesson_plans' => $myLessonPlans, 'user' => $this->getUser()));
     }
 
     /**

@@ -4,6 +4,7 @@ namespace Yawman\TrainingBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
 use Yawman\TrainingBundle\Entity\User;
+use Yawman\TrainingBundle\Entity\Company;
 
 class UserLessonRepository extends EntityRepository {
     
@@ -33,6 +34,32 @@ class UserLessonRepository extends EntityRepository {
         }
         
         return $userLessonsByLessonPlan;
+    }
+    
+    /**
+     * 
+     * @param \Yawman\TrainingBundle\Entity\Company $company
+     * @param array $orderBy
+     * @param int $limit
+     * @param int $offset
+     * @return array
+     */
+    public function findByCompanyUsers(Company $company, $orderBy = null, $limit = null, $offset = null){
+        
+        $userIds = $this->getEntityManager()->createQueryBuilder();
+        $userIds->addSelect('distinct u.id');
+        $userIds->from('YawmanTrainingBundle:User', 'u');
+        $userIds->where($userIds->expr()->eq('u.company', $company->getId()));
+        
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        
+        $qb->select('ul')->from('YawmanTrainingBundle:UserLesson', 'ul')
+                ->where($qb->expr()->in('ul.user', $userIds->getDQL()))
+                ->setMaxResults($limit)
+                ->orderBy('ul.modifiedAt', 'DESC');
+        
+        return $qb->getQuery()->getResult();
+        
     }
     
 }
