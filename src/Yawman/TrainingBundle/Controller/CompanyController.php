@@ -209,7 +209,50 @@ class CompanyController extends Controller {
     }
     
     /**
-     * @Secure(roles="ROLE_MANAGER")
+     * 
+     * @Secure(roles="ROLE_ADMIN")
+     * @Route("/{companyId}/list-available-users", requirements={"companyId" = "\d+"}, name="company_list_available_users")
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     */
+    public function listAvailableUsersAction($companyId){
+        $em = $this->getDoctrine()->getEntityManager();
+        
+        $company = $em->getRepository('YawmanTrainingBundle:Company')->find($companyId);
+        if(!$company){
+            throw $this->createNotFoundException('Unable to find Company entity.');
+        }
+        
+        $users = $em->getRepository('YawmanTrainingBundle:User')->findBy(array('company' => null));
+        
+        $form = $this->createFormBuilder()
+                        ->add('users', 'entity', array('class' => 'YawmanTrainingBundle:User', 'choices' => $users, 'property' => 'username', 'label' => ' ', 'multiple' => true))
+                        ->getForm();
+        
+        return $this->render('YawmanTrainingBundle:Company:list-available-users.html.twig', array('form' => $form->createView(), 'company' => $company));
+    }
+    
+    /**
+     * @Secure(roles="ROLE_ADMIN")
+     * @Route("/{companyId}/add-users", requirements={"_method" = "post", "companyId" = "\d+"}, name="company_add_users")
+     * @param int $companyId
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     */
+    public function addUsersAction($companyId){
+        $em = $this->getDoctrine()->getEntityManager();
+        
+        $company = $em->getRepository('YawmanTrainingBundle:Company')->find($companyId);
+        if(!$company){
+            throw $this->createNotFoundException('Unable to find Company entity.');
+        }
+        
+        
+    }
+    
+    
+    /**
+     * @Secure(roles="ROLE_ADMIN")
      * @Route("/{companyId}/remove-user/{userId}", requirements={"companyId" = "\d+", "userId" = "\d+"}, name="company_remove_user")
      * @param int $companyId
      * @param int $userId

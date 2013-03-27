@@ -44,9 +44,15 @@ class Company {
      * @ORM\OneToMany(targetEntity="User", mappedBy="company", cascade={"remove"})
      */
     private $users;
+    
+    /**
+     * @ORM\ManyToMany(targetEntity="LessonPlan", inversedBy="company")
+     */
+    private $lessonPlans;
 
     public function __construct() {
         $this->users = new ArrayCollection();
+        $this->lessonPlans = new ArrayCollection();
     }
 
     /**
@@ -143,6 +149,36 @@ class Company {
      */
     public function getUsers() {
         return $this->users;
+    }
+    
+    /**
+     * Add lessonPlans
+     *
+     * @param \Yawman\TrainingBundle\Entity\LessonPlan $lessonPlan
+     * @return Company
+     */
+    public function addLessonPlan(\Yawman\TrainingBundle\Entity\LessonPlan $lessonPlan) {
+        $this->lessonPlans[] = $lessonPlan;
+
+        return $this;
+    }
+
+    /**
+     * Remove lessonPlan
+     *
+     * @param \Yawman\TrainingBundle\Entity\LessonPlan $lessonPlan
+     */
+    public function removeLessonPlan(\Yawman\TrainingBundle\Entity\LessonPlan $lessonPlan) {
+        $this->lessonPlans->removeElement($lessonPlan);
+    }
+
+    /**
+     * Get lessonPlans
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getLessonPlans() {
+        return $this->lessonPlans;
     }
 
     /**

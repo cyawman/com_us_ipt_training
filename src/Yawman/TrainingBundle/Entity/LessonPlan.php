@@ -60,10 +60,17 @@ class LessonPlan {
      * @ORM\OneToMany(targetEntity="LessonPlanLesson", mappedBy="lessonPlan")
      */
     private $lessonPlanLessons;
+    
+    /**
+     * @ORM\ManyToMany(targetEntity="Company", mappedBy="lessonPlan")
+     *
+     */
+    private $companys;
 
     public function __construct() {
         $this->lessonPlanLessons = new ArrayCollection();
         $this->userLessonPlans = new ArrayCollection();
+        $this->companys = new ArrayCollection();
     }
 
     /**
@@ -210,6 +217,36 @@ class LessonPlan {
         return $this->lessonPlanLessons;
     }
 
+    /**
+     * Add company
+     *
+     * @param \Yawman\TrainingBundle\Entity\Company $company
+     * @return LessonPlan
+     */
+    public function addCompany(\Yawman\TrainingBundle\Entity\Company $company) {
+        $this->companys[] = $company;
+
+        return $this;
+    }
+
+    /**
+     * Remove company
+     *
+     * @param \Yawman\TrainingBundle\Entity\Company $company
+     */
+    public function removeCompany(\Yawman\TrainingBundle\Entity\Company $company) {
+        $this->companys->removeElement($company);
+    }
+
+    /**
+     * Get companys
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getCompanys() {
+        return $this->companys;
+    }
+    
     /**
      * Now we tell doctrine that before we persist or update we call the updatedTimestamps() function.
      *

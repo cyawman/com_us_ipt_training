@@ -1,0 +1,21 @@
+{% extends "::admin.html.twig" %}
+
+{% block headTitle %}Company Add Users{% endblock %}
+
+{% block bodyTitle %}Add Users{% endblock %}
+
+{% block content %}
+<div class="row-fluid">
+    <div class="span7">
+        <p class="lead">Add multiple Users to a Company.</p>
+        <form action="{{ path('company_update', { 'id': company.id }) }}" method="post" {{ form_enctype(form) }}>
+            {{ form_widget(form) }}
+            <p>
+                <button class="btn btn-primary" type="submit"><i class="icon-plus-sign icon-white"></i> Add User(s)</button>
+            </p>
+        </form>
+        <a href="{{ path('company') }}"><i class="icon-backward"></i> Back to the list</a>
+    </div>
+    <div class="span5"></div>
+</div>
+{% endblock %}

@@ -53,6 +53,9 @@
             </table>
         {% endif %}
         <p>
+            <a class="btn btn-primary" href="{{ path('company_list_available_users', { 'companyId': entity.id }) }}"><i class="icon-plus-sign icon-white"></i> Add User(s)</a>
+        </p>
+        <p>
             <a class="btn btn-primary" href="{{ path('company_edit', { 'id': entity.id }) }}"><i class="icon-wrench icon-white"></i> Edit Company</a>
         </p>
         <p>
