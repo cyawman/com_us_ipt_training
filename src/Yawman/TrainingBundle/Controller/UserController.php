@@ -596,6 +596,36 @@ class UserController extends Controller {
         
         return $this->redirect($this->generateUrl('dashboard'));
     }
+    
+    /**
+     * Shows the number of remaining Lessons for a User
+     * 
+     * @Secure(roles="ROLE_MANAGER")
+     * @Route("/{id}/show-remaining-lessons", name="user_show_remaining_lessons")
+     * @param int $id
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     */
+    public function showRemainingLessonsAction($id){
+        $em = $this->getDoctrine()->getEntityManager();
+        
+        $user = $em->getRepository('YawmanTrainingBundle:User')->find($id);
+        if(!$user){
+            throw $this->createNotFoundException('Unable to find LessonPlanLesson entity.');
+        }
+        
+        $remainingLessons = 0;
+        
+        foreach($user->getUserLessonPlans() as $userLessonPlan){
+            $currentPosition = $userLessonPlan->getPosition();
+            $lessonsInLessonPlan = count($userLessonPlan->getLessonPlan()->getLessonPlanLessons());
+            if($currentPosition < $lessonsInLessonPlan){
+                $remainingLessons += ($lessonsInLessonPlan - $currentPosition);
+            }
+        }
+        
+        return $this->render('YawmanTrainingBundle:User:_show-remaining-lessons.html.twig', array('remainingLessons' => $remainingLessons));
+    }
 
     /**
      * Provides a form used to delete a User entity

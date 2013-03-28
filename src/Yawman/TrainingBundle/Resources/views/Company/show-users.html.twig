@@ -20,6 +20,7 @@
                 <thead>
                     <tr>
                         <th>Name</th>
+                        <th>Unfinished Lessons</th>
                         <th>Role</th>
                         <th>Actions</th>
                     </tr>
@@ -28,6 +29,7 @@
                     {% for user in entity.users %}
                         <tr>
                             <td>{{ user.email }}</td>
+                            <td>{% render url('user_show_remaining_lessons', {'id': user.id}) %}</td>
                             <td>
                                 {% for group in user.groups %}
                                     {{ group.name|capitalize }}
