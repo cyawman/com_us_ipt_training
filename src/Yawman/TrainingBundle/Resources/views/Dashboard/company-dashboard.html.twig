@@ -17,7 +17,7 @@
 </div>
 
 <div class="row-fluid">   
-    <div class="span7">
+    <div class="span12">
         <!-- Recent User Activity -->
         <section>
             <header><h2>Recent User Activity</h2></header>
@@ -46,39 +46,40 @@
                     </tfoot>
                 </table>
             {% else %}
-                <div class="well well-small">No Recent User Activity</div>
+                <div class="well well-small">
+                    <p>No Recent User Activity</p>
+                    <p>You have no User activity because you either don't have any other Users or your Users haven't taken any Lessons yet.</p>
+                    <p>You can start by <a href="{{ path('company_show_users', {'id': company.id }) }}">viewing all Users</a>  in the Company. You can also <a href="{{ path('company_new_user', {'id': company.id}) }}">create a new User</a>.</p></p>
+                </div>
             {% endif %}
         </section>
-        
-        {% if isCompanyUser %}
-            <hr />
-            <!-- Lesson Plans -->
-            <section>
-                <header><h2>Lessons</h2></header>
-                {% render url('user_list_lesson_plans', {'userId': user.id}) %}
-            </section>
-        {% endif %}
-        
-    </div>
-    <div class="span5">
-        <!-- Common Tasks -->
+        <hr />
+        <!-- Lesson Plans -->
         <section>
-            <header><h2>Common Tasks</h2></header>
-            <div class="well well-small">
-                <nav>
-                    <ul class="nav nav-list">
-                        <li class="nav-header">Lessons</li>
-                        <li><a href="{{ path('lesson_new') }}">Create a new Lesson</a></li>
-                        <li><a href="{{ path('lessonplan_choose_for_lesson') }}">Add a Lesson to a Lesson Plan</a></li>
-                        <li><a href="{{ path('lesson') }}">View all Lessons</a></li>
-                        <li class="divider"></li>
-                        <li class="nav-header">Users</li>
-                        <li><a href="{{ path('user_new') }}">Create a new Users</a></li>
-                        <li><a href="{{ path('user') }}">Add a User to a Company</a></li>
-                        <li><a href="{{ path('user') }}">View all Users</a></li>
-                    </ul>
-                </nav>
-            </div>
+            <header>
+                <h2>Lessons</h2>
+            </header>
+            {% if isCompanyUser %}
+                {% render url('user_list_lesson_plans', {'userId': user.id}) %}
+            {% else %}
+                {% for lessonPlan in company.lessonPlans %}
+                    <table class="table table-bordered table-hover table-striped">
+                        <caption>{{ lessonPlan.name }}</caption>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        {% for lessonPlanLesson in lessonPlan.lessonPlanLessons %}
+                            <tr>
+                                <td>{{lessonPlanLesson.lesson.name}}</td>
+                                <td>{{lessonPlanLesson.lesson.description}}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                {% endfor %}
+            {% endif %}
         </section>
     </div>
 </div>

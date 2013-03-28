@@ -10,7 +10,13 @@
 
 {% block content %}
 <div class="row-fluid">
-    <div class="span7">
+    <div class="span12">
+        <p class="lead">Begin by playing a Lesson. Unlock other Lessons by succesffully passing the Lesson exams.</p>
+        <hr />
+    </div>
+</div>
+<div class="row-fluid">
+    <div class="span12">
         <section>
             <header><h2>Lessons</h2></header>
             {% render url('user_list_lesson_plans', {'userId': user.id}) %}

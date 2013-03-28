@@ -507,7 +507,7 @@ class UserController extends Controller {
          * Don't penelize a User for retaking a passed Lesson
          */
         if($userLessonPlan->getPosition() <= $lessonPlanLesson->getPosition()){
-            $userLessonPlan->setPosition($lessonPlanLesson->getPosition());
+            $userLessonPlan->setPosition($lessonPlanLesson->getPosition()+1);
             $em->persist($userLessonPlan);
         }
         
