@@ -46,7 +46,7 @@ class Company {
     private $users;
     
     /**
-     * @ORM\ManyToMany(targetEntity="LessonPlan", inversedBy="company")
+     * @ORM\ManyToMany(targetEntity="LessonPlan", inversedBy="companys")
      */
     private $lessonPlans;
 

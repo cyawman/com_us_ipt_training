@@ -1,0 +1,22 @@
+{% extends "::admin.html.twig" %}
+
+{% block headTitle %}Company Add Lesson Plans{% endblock %}
+
+{% block bodyTitle %}Add Lesson Plans{% endblock %}
+
+{% block content %}
+<div class="row-fluid">
+    <div class="span7">
+        <p class="lead">Add multiple Lesson Plans to a Company.</p>
+        <form action="{{ path('company_add_lesson_plans', { 'companyId': company.id }) }}" method="post" {{ form_enctype(form) }}>
+            {{ form_widget(form) }}
+            <p>
+                <button class="btn btn-primary" type="submit"><i class="icon-plus-sign icon-white"></i> Add Lesson Plan(s)</button>
+            </p>
+        </form>
+        <a href="{{ path('company') }}"><i class="icon-backward"></i> Back to the list</a>
+    </div>
+    <div class="span5"></div>
+</div>
+{% endblock %}
+

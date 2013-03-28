@@ -21,11 +21,3 @@ YawmanTrainingBundle_lesson:
 YawmanTrainingBundle_lessonplan:
         resource: "@YawmanTrainingBundle/Controller/LessonPlanController.php"
         type: annotation
-
-YawmanTrainingBundle_userlesson:
-        resource: "@YawmanTrainingBundle/Controller/UserLessonController.php"
-        type: annotation
-
-YawmanTrainingBundle_userlessonplan:
-        resource: "@YawmanTrainingBundle/Controller/UserLessonPlanController.php"
-        type: annotation

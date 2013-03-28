@@ -6,8 +6,14 @@
 
 {% block content %}
 <div class="row-fluid">
-    <div class="span7">
+    <div class="span12">
         <p class="lead">A Company is simply an ID and a Name.</p>
+        <hr />
+    </div>
+</div>
+<div class="row-fluid">
+    <div class="span7">
+        <h2>Overview</h2>
         <p>When a Company is created it automatically generates an ID. The ID can never be changed. You can change the Name of a Company as many times as you want.</p>
         <table class="table table-bordered table-striped table-hover">
             <tbody>
@@ -20,13 +26,22 @@
                     <td>{{ entity.name }}</td>
                 </tr>
                 <tr>
-                    <th>Users</th>
+                    <th>Total Users</th>
                     <td>{{ entity.users|length }}</td>
+                </tr>
+                <tr>
+                    <th>Total Lesson Plans</th>
+                    <td>{{ entity.lessonPlans|length }}</td>
                 </tr>
             </tbody>
         </table>
+        <p>
+            <a class="btn btn-primary" href="{{ path('company_edit', { 'id': entity.id }) }}"><i class="icon-wrench icon-white"></i> Edit Company</a>
+        </p>
+        <hr />
         {% if entity.users %}
-            <p>Users are assigned to a Company. Users can be added and removed from a Company without affecting the Users attributes. Click the Edit Company button below to add a User.</p>
+        <h2><a name="users"></a>Users</h2>
+            <p>Users are assigned to a Company. Users can be added and removed from a Company. If a User is Added to a Company then that User inherits access to the Companys Lesson Plans. If a User is Removed from a Company then that Companys Lesson Plan is removed from the User. Click the Edit Company button below to add a User.</p>
             <table class="table table-bordered table-striped table-hover">
                 <thead>
                     <tr>
@@ -44,26 +59,44 @@
                                     {{ group.name|capitalize }}
                                 {% endfor %}
                             </td>
-                            <td>
-                                <a href="{{ path("company_remove_user", {"companyId": entity.id, "userId": user.id }) }}">Remove</a>
-                            </td>
+                            <td><a href="{{ path("company_remove_user", {"companyId": entity.id, "userId": user.id }) }}">Remove</a></td>
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
+            <p>
+                <a class="btn btn-primary" href="{{ path('company_list_available_users', { 'companyId': entity.id }) }}"><i class="icon-plus-sign icon-white"></i> Add User(s)</a>
+            </p>
+            <hr />
         {% endif %}
-        <p>
-            <a class="btn btn-primary" href="{{ path('company_list_available_users', { 'companyId': entity.id }) }}"><i class="icon-plus-sign icon-white"></i> Add User(s)</a>
-        </p>
-        <p>
-            <a class="btn btn-primary" href="{{ path('company_edit', { 'id': entity.id }) }}"><i class="icon-wrench icon-white"></i> Edit Company</a>
-        </p>
-        <p>
-            <form action="{{ path('company_delete', { 'id': entity.id }) }}" method="post">
-                {{ form_widget(delete_form) }}
-                <button class="btn btn-danger" type="submit"><i class="icon-minus-sign icon-white"></i> Delete Company</button>
-            </form>
-        </p>
+        {% if entity.lessonPlans %}
+            <h2><a name="lesson-plans"></a>Lesson Plans</h2>
+            <p>Lesson Plans are assigned to a Company to help manage the Lesson Plans for all Users in the Company.</p>
+            <table class="table table-bordered table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Lessons</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for lessonPlan in entity.lessonPlans %}
+                        <tr>
+                            <td>{{ lessonPlan.name }}</td>
+                            <td>{{ lessonPlan.description }}</td>
+                            <td>{{ lessonPlan.lessonPlanLessons|length }}</td>
+                            <td><a href="{{ path("company_remove_lesson_plan", {"companyId": entity.id, "lessonPlanId": lessonPlan.id }) }}">Remove</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <p>
+                <a class="btn btn-primary" href="{{ path('company_list_available_lesson_plans', { 'companyId': entity.id }) }}"><i class="icon-plus-sign icon-white"></i> Add Lesson Plan(s)</a>
+            </p>
+        {% endif %}
+        
         <p>
             <a href="{{ path('company') }}"><i class="icon-backward"></i> Back to the Company list</a>
         </p>
@@ -71,7 +104,12 @@
     <div class="span5">
         <h2>Deleting a Company?</h2>
         <div class="well">
-            <p>Deleting a Company does not delete the Users from the System. All of the Users will simply exist without being assigned to a Company. Deleting a Company is not necessary in most cases.</p><p>If you want to prevent all Users in a Company from accessing the System then simply Disable the Company (coming soon). This way you can re-enable the Company and its Users with little effort.</p>
+            <p>Deleting a Company does not delete the Users from the System. All of the Users will simply exist without being assigned to a Company. Deleting a Company is not necessary in most cases.</p>
+            <p>If you want to prevent all Users in a Company from accessing the System then simply Disable the Company (coming soon). This way you can re-enable the Company and its Users with little effort.</p>
+            <form action="{{ path('company_delete', { 'id': entity.id }) }}" method="post">
+                {{ form_widget(delete_form) }}
+                <button class="btn btn-danger" type="submit"><i class="icon-minus-sign icon-white"></i> Delete Company</button>
+            </form>
         </div>
     </div>
 </div>

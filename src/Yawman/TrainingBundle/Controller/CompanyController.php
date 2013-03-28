@@ -8,7 +8,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Yawman\TrainingBundle\Entity\Company;
+use Yawman\TrainingBundle\Entity\User;
+use Yawman\TrainingBundle\Entity\UserLessonPlan;
 use Yawman\TrainingBundle\Form\CompanyType;
+use Yawman\TrainingBundle\Form\UserType;
 
 /**
  * Controls the management of Companies
@@ -42,7 +45,7 @@ class CompanyController extends Controller {
     /**
      * Displays a Company entity
      * 
-     * @Secure(roles="ROLE_MANAGER")
+     * @Secure(roles="ROLE_ADMIN")
      * @Route("/{id}/show", requirements={"id" = "\d+"}, name="company_show")
      * @param int $id
      * @return \Symfony\Component\HttpFoundation\Response
@@ -56,16 +59,37 @@ class CompanyController extends Controller {
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Company entity.');
         }
-        
-        if (false === $this->get('security.context')->isGranted('ROLE_ADMIN')) {
-            if($this->getUser()->getCompany()->getId() !== $entity->getId()){
-                throw new AccessDeniedException();
-            }
-        }
 
         $deleteForm = $this->createDeleteForm($id);
 
         return $this->render('YawmanTrainingBundle:Company:show.html.twig', array('entity' => $entity, 'delete_form' => $deleteForm->createView()));
+    }
+
+    /**
+     * Displays Users in a Company
+     * 
+     * @Secure(roles="ROLE_MANAGER")
+     * @Route("/{id}/show-users", requirements={"id" = "\d+"}, name="company_show_users")
+     * @param int $id
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     */
+    public function showUsersAction($id) {
+        $em = $this->getDoctrine()->getManager();
+
+        $entity = $em->getRepository('YawmanTrainingBundle:Company')->find($id);
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Company entity.');
+        }
+
+        if (false === $this->get('security.context')->isGranted('ROLE_ADMIN')) {
+            if ($this->getUser()->getCompany()->getId() !== $entity->getId()) {
+                throw new AccessDeniedException();
+            }
+        }
+
+        return $this->render('YawmanTrainingBundle:Company:show-users.html.twig', array('entity' => $entity));
     }
 
     /**
@@ -107,6 +131,95 @@ class CompanyController extends Controller {
     }
 
     /**
+     * Creates a new Company User
+     * 
+     * @Secure(roles="ROLE_MANAGER")
+     * @Route("/{id}/new-user", requirements={"id" = "\d+"}, name="company_new_user")
+     * @param int $id
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     */
+    public function newUserAction($id) {
+        $em = $this->getDoctrine()->getEntityManager();
+
+        $company = $em->getRepository('YawmanTrainingBundle:Company')->find($id);
+        if (!$company) {
+            throw $this->createNotFoundException('Unable to find Company entity.');
+        }
+
+        if (false === $this->get('security.context')->isGranted('ROLE_ADMIN')) {
+            if ($this->getUser()->getCompany()->getId() !== $company->getId()) {
+                throw new AccessDeniedException();
+            }
+        }
+
+        $entity = new User();
+
+        $form = $this->createForm(new UserType(), $entity);
+        $form->remove('company');
+        $form->remove('groups');
+
+        return $this->render('YawmanTrainingBundle:Company:new-user.html.twig', array('entity' => $entity, 'form' => $form->createView(), 'company' => $company));
+    }
+
+    /**
+     * Creates a new Company entity
+     * 
+     * @Secure(roles="ROLE_ADMIN")
+     * @Route("/{companyId}/create-user", requirements={"_method" = "post", "companyId" = "\d+"}, name="company_create_user")
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param int $companyId
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function createUserAction(Request $request, $companyId) {
+        $em = $this->getDoctrine()->getEntityManager();
+
+        $company = $em->getRepository('YawmanTrainingBundle:Company')->find($companyId);
+        if (!$company) {
+            throw $this->createNotFoundException('Unable to find Company entity.');
+        }
+
+        if (false === $this->get('security.context')->isGranted('ROLE_ADMIN')) {
+            if ($this->getUser()->getCompany()->getId() !== $company->getId()) {
+                throw new AccessDeniedException();
+            }
+        }
+
+        $entity = new User();
+        $form = $this->createForm(new UserType(), $entity);
+        $form->remove('company');
+        $form->remove('groups');
+        $form->bind($request);
+
+        if ($form->isValid()) {
+            $data = $form->getData();
+            $group = $em->getRepository('YawmanTrainingBundle:Group')->findOneBy(array('role' => 'ROLE_USER'));
+
+            $entity->setUsername($data->getEmail());
+            $entity->setCompany($company);
+            $entity->addGroup($group);
+            $em->persist($entity);
+            $em->flush();
+            
+            foreach ($company->getLessonPlans() as $lessonPlan) {
+                $userLessonPlan = $em->getRepository('YawmanTrainingBundle:UserLessonPlan')->findOneBy(array('user' => $entity, 'lessonPlan' => $lessonPlan));
+                if (!$userLessonPlan) {
+                    $userLessonPlan = new UserLessonPlan();
+                    $userLessonPlan->setUser($entity);
+                    $userLessonPlan->setLessonPlan($lessonPlan);
+                    $em->persist($userLessonPlan);
+                }
+            }
+
+            $em->flush();
+
+            return $this->redirect($this->generateUrl('dashboard'));
+        }
+
+        return $this->render('YawmanTrainingBundle:Company:new-user.html.twig', array('entity' => $entity, 'form' => $form->createView(), 'company' => $company));
+    }
+
+    /**
      * Provides a form to edit a Company entity
      * 
      * @Secure(roles="ROLE_MANAGER")
@@ -123,9 +236,9 @@ class CompanyController extends Controller {
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Company entity.');
         }
-        
+
         if (false === $this->get('security.context')->isGranted('ROLE_ADMIN')) {
-            if($this->getUser()->getCompany()->getId() !== $entity->getId()){
+            if ($this->getUser()->getCompany()->getId() !== $entity->getId()) {
                 throw new AccessDeniedException();
             }
         }
@@ -154,9 +267,9 @@ class CompanyController extends Controller {
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Company entity.');
         }
-        
+
         if (false === $this->get('security.context')->isGranted('ROLE_ADMIN')) {
-            if($this->getUser()->getCompany()->getId() !== $entity->getId()){
+            if ($this->getUser()->getCompany()->getId() !== $entity->getId()) {
                 throw new AccessDeniedException();
             }
         }
@@ -207,7 +320,7 @@ class CompanyController extends Controller {
 
         return $this->redirect($this->generateUrl('company'));
     }
-    
+
     /**
      * 
      * @Secure(roles="ROLE_ADMIN")
@@ -215,23 +328,19 @@ class CompanyController extends Controller {
      * @return \Symfony\Component\HttpFoundation\Response
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
-    public function listAvailableUsersAction($companyId){
+    public function listAvailableUsersAction($companyId) {
         $em = $this->getDoctrine()->getEntityManager();
-        
+
         $company = $em->getRepository('YawmanTrainingBundle:Company')->find($companyId);
-        if(!$company){
+        if (!$company) {
             throw $this->createNotFoundException('Unable to find Company entity.');
         }
-        
-        $users = $em->getRepository('YawmanTrainingBundle:User')->findBy(array('company' => null));
-        
-        $form = $this->createFormBuilder()
-                        ->add('users', 'entity', array('class' => 'YawmanTrainingBundle:User', 'choices' => $users, 'property' => 'username', 'label' => ' ', 'multiple' => true))
-                        ->getForm();
-        
+
+        $form = $this->createAvailableUsersForm();
+
         return $this->render('YawmanTrainingBundle:Company:list-available-users.html.twig', array('form' => $form->createView(), 'company' => $company));
     }
-    
+
     /**
      * @Secure(roles="ROLE_ADMIN")
      * @Route("/{companyId}/add-users", requirements={"_method" = "post", "companyId" = "\d+"}, name="company_add_users")
@@ -239,47 +348,226 @@ class CompanyController extends Controller {
      * @return \Symfony\Component\HttpFoundation\Response
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
-    public function addUsersAction($companyId){
+    public function addUsersAction(Request $request, $companyId) {
         $em = $this->getDoctrine()->getEntityManager();
-        
+
         $company = $em->getRepository('YawmanTrainingBundle:Company')->find($companyId);
-        if(!$company){
+        if (!$company) {
             throw $this->createNotFoundException('Unable to find Company entity.');
         }
-        
-        
+
+        $form = $this->createAvailableUsersForm();
+        $form->bind($request);
+
+        if ($form->isValid()) {
+            $data = $form->getData();
+
+            foreach ($data['users'] as $user) {
+                $user->setCompany($company);
+                $em->persist($user);
+                foreach ($company->getLessonPlans() as $lessonPlan) {
+                    $userLessonPlan = $em->getRepository('YawmanTrainingBundle:UserLessonPlan')->findOneBy(array('user' => $user, 'lessonPlan' => $lessonPlan));
+                    if (!$userLessonPlan) {
+                        $userLessonPlan = new UserLessonPlan();
+                        $userLessonPlan->setUser($user);
+                        $userLessonPlan->setLessonPlan($lessonPlan);
+                        $em->persist($userLessonPlan);
+                    }
+                }
+            }
+
+            $em->flush();
+
+            $this->get('session')->setFlash('success', 'The update was successful!');
+
+            return $this->redirect($this->generateUrl('company_show', array("id" => $companyId)));
+        }
     }
-    
-    
+
     /**
-     * @Secure(roles="ROLE_ADMIN")
+     * @Secure(roles="ROLE_MANAGER")
      * @Route("/{companyId}/remove-user/{userId}", requirements={"companyId" = "\d+", "userId" = "\d+"}, name="company_remove_user")
      * @param int $companyId
      * @param int $userId
      * @return \Symfony\Component\HttpFoundation\Response
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
-    public function removeUserAction($companyId, $userId){
+    public function removeUserAction($companyId, $userId) {
         $em = $this->getDoctrine()->getEntityManager();
-        
+
         $company = $em->getRepository('YawmanTrainingBundle:Company')->find($companyId);
-        if(!$company){
+        if (!$company) {
             throw $this->createNotFoundException('Unable to find Company entity.');
         }
-        
+
         $user = $em->getRepository('YawmanTrainingBundle:User')->find($userId);
-        if(!$user){
+        if (!$user) {
             throw $this->createNotFoundException('Unable to find User entity.');
         }
         
+        if (false === $this->get('security.context')->isGranted('ROLE_ADMIN')) {
+            if ($this->getUser()->getCompany()->getId() !== $company->getId()) {
+                throw new AccessDeniedException();
+            }
+        }
+
         $user->setCompany(null);
-        
         $em->persist($user);
+
+        foreach ($company->getLessonPlans() as $lessonPlan) {
+            $userLessonPlan = $em->getRepository('YawmanTrainingBundle:UserLessonPlan')->findOneBy(array('user' => $user, 'lessonPlan' => $lessonPlan));
+            if ($userLessonPlan) {
+                $em->remove($userLessonPlan);
+            }
+        }
+
         $em->flush();
-        
+
         $this->get('session')->setFlash('success', 'The update was successful!');
+
+        $request = $this->getRequest();
+        $redirect = $this->generateUrl('company_show', array("id" => $companyId));
+        if($request->query->has('redirect')){
+            $redirect = $request->query->get('redirect');
+        }
         
+        return $this->redirect($redirect);
+    }
+
+    /**
+     * 
+     * @Secure(roles="ROLE_ADMIN")
+     * @Route("/{companyId}/list-available-lesson-plans", requirements={"companyId" = "\d+"}, name="company_list_available_lesson_plans")
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     */
+    public function listAvailableLessonPlansAction($companyId) {
+        $em = $this->getDoctrine()->getEntityManager();
+
+        $company = $em->getRepository('YawmanTrainingBundle:Company')->find($companyId);
+        if (!$company) {
+            throw $this->createNotFoundException('Unable to find Company entity.');
+        }
+
+        $form = $this->createAvailableLessonPlansForm($company);
+
+        return $this->render('YawmanTrainingBundle:Company:list-available-lesson-plans.html.twig', array('form' => $form->createView(), 'company' => $company));
+    }
+
+    /**
+     * @Secure(roles="ROLE_ADMIN")
+     * @Route("/{companyId}/add-lesson-plans", requirements={"_method" = "post", "companyId" = "\d+"}, name="company_add_lesson_plans")
+     * @param int $companyId
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     */
+    public function addLessonPlansAction(Request $request, $companyId) {
+        $em = $this->getDoctrine()->getEntityManager();
+
+        $company = $em->getRepository('YawmanTrainingBundle:Company')->find($companyId);
+        if (!$company) {
+            throw $this->createNotFoundException('Unable to find Company entity.');
+        }
+
+        $form = $this->createAvailableLessonPlansForm($company);
+        $form->bind($request);
+
+        if ($form->isValid()) {
+            $data = $form->getData();
+
+            foreach ($data['lessonPlans'] as $lessonPlan) {
+                $company->addLessonPlan($lessonPlan);
+                $em->persist($company);
+
+                foreach ($company->getUsers() as $user) {
+                    $userLessonPlan = $em->getRepository('YawmanTrainingBundle:UserLessonPlan')->findOneBy(array('user' => $user, 'lessonPlan' => $lessonPlan));
+                    if (!$userLessonPlan) {
+                        $userLessonPlan = new UserLessonPlan();
+                        $userLessonPlan->setUser($user);
+                        $userLessonPlan->setLessonPlan($lessonPlan);
+                        $em->persist($userLessonPlan);
+                    }
+                }
+            }
+
+            $em->flush();
+
+            $this->get('session')->setFlash('success', 'The update was successful!');
+
+            return $this->redirect($this->generateUrl('company_show', array("id" => $companyId)));
+        }
+
+        return $this->render('YawmanTrainingBundle:Company:list-available-lesson-plans.html.twig', array('form' => $form->createView(), 'company' => $company));
+    }
+
+    /**
+     * @Secure(roles="ROLE_ADMIN")
+     * @Route("/{companyId}/remove-lesson-plan/{lessonPlanId}", requirements={"companyId" = "\d+", "lessonPlanId" = "\d+"}, name="company_remove_lesson_plan")
+     * @param int $companyId
+     * @param int $lessonPlanId
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     */
+    public function removeLessonPlanAction($companyId, $lessonPlanId) {
+        $em = $this->getDoctrine()->getEntityManager();
+
+        $company = $em->getRepository('YawmanTrainingBundle:Company')->find($companyId);
+        if (!$company) {
+            throw $this->createNotFoundException('Unable to find Company entity.');
+        }
+
+        $lessonPlan = $em->getRepository('YawmanTrainingBundle:LessonPlan')->find($lessonPlanId);
+        if (!$lessonPlan) {
+            throw $this->createNotFoundException('Unable to find Lesson Plan entity.');
+        }
+
+        $company->removeLessonPlan($lessonPlan);
+        $em->persist($company);
+
+        foreach ($company->getUsers() as $user) {
+            $userLessonPlan = $em->getRepository('YawmanTrainingBundle:UserLessonPlan')->findOneBy(array('user' => $user, 'lessonPlan' => $lessonPlan));
+            if ($userLessonPlan) {
+                $em->remove($userLessonPlan);
+            }
+        }
+
+        $em->flush();
+
+        $this->get('session')->setFlash('success', 'The update was successful!');
+
         return $this->redirect($this->generateUrl('company_show', array("id" => $companyId)));
+    }
+
+    /**
+     * Provides a form of available Lesson Plans for a Company
+     * 
+     * @param int $id
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     * @return \Symfony\Component\Form\FormBuilder
+     */
+    public function createAvailableLessonPlansForm($company) {
+        $em = $this->getDoctrine()->getEntityManager();
+
+        $lessonPlans = $em->getRepository('YawmanTrainingBundle:LessonPlan')->findLessonPlansNotWithCompany($company);
+
+        return $this->createFormBuilder()
+                        ->add('lessonPlans', 'entity', array('class' => 'YawmanTrainingBundle:LessonPlan', 'choices' => $lessonPlans, 'property' => 'name', 'label' => ' ', 'multiple' => true))
+                        ->getForm();
+    }
+
+    /**
+     * Provides a form of available Users for a Company
+     * 
+     * @return \Symfony\Component\Form\FormBuilder
+     */
+    public function createAvailableUsersForm() {
+        $em = $this->getDoctrine()->getEntityManager();
+
+        $users = $em->getRepository('YawmanTrainingBundle:User')->findBy(array('company' => null));
+
+        return $this->createFormBuilder()
+                        ->add('users', 'entity', array('class' => 'YawmanTrainingBundle:User', 'choices' => $users, 'property' => 'username', 'label' => ' ', 'multiple' => true))
+                        ->getForm();
     }
 
     /**
@@ -294,4 +582,5 @@ class CompanyController extends Controller {
                         ->getForm()
         ;
     }
+
 }

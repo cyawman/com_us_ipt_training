@@ -121,7 +121,7 @@ class DashboardController extends Controller {
         
         $recentUserActivity = $em->getRepository('YawmanTrainingBundle:UserLesson')->findByCompanyUsers($company);
         
-        return $this->render('YawmanTrainingBundle:Dashboard:company-dashboard.html.twig', array('recentUserActivity' => $recentUserActivity, 'user' => $this->getUser(), 'isCompanyUser' => $isCompanyUser));
+        return $this->render('YawmanTrainingBundle:Dashboard:company-dashboard.html.twig', array('recentUserActivity' => $recentUserActivity, 'user' => $this->getUser(), 'isCompanyUser' => $isCompanyUser, 'company' => $company));
     }
 
     /**

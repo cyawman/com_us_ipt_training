@@ -8,7 +8,7 @@
 <div class="row-fluid">
     <div class="span7">
         <p class="lead">Add multiple Users to a Company.</p>
-        <form action="{{ path('company_update', { 'id': company.id }) }}" method="post" {{ form_enctype(form) }}>
+        <form action="{{ path('company_add_users', { 'companyId': company.id }) }}" method="post" {{ form_enctype(form) }}>
             {{ form_widget(form) }}
             <p>
                 <button class="btn btn-primary" type="submit"><i class="icon-plus-sign icon-white"></i> Add User(s)</button>

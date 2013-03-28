@@ -2,20 +2,44 @@
 
 {% block headTitle %}Company Edit{% endblock %}
 
-{% block bodyTitle %}Edit: {{ entity.name }}{% endblock %}
+{% block bodyTitle %}{{ entity.name }}{% endblock %}
 
 {% block content %}
 <div class="row-fluid">
-    <div class="span7">
+    <div class="span12">
         <p class="lead">Changing the Name of the Company is harmless.</p>
+        <hr />
+    </div>
+</div>
+<div class="row-fluid">
+    <div class="span7">
         <form action="{{ path('company_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
             {{ form_widget(edit_form) }}
             <p>
-                <button class="btn btn-primary" type="submit">Rename</button>
+                <button class="btn btn-primary" type="submit"><i class="icon-ok icon-white"></i> Save</button>
             </p>
         </form>
         <a href="{{ path('company') }}"><i class="icon-backward"></i> Back to the list</a>
     </div>
-    <div class="span5"></div>
+    <div class="span5">
+        <section>
+            <header><h2>Naming Tips</h2></header>
+            <div class="well">
+                <p>You can name the Company whatever you want. Remember, the User can see their Company name so name it appropriately. You can use letters, numbers and special characters. Try to be consistent and avoid acronyms and abbreviations.</p>
+                <p>Bad Names:</p>
+                <ul>
+                    <li>IPT</li>
+                    <li>Harry's Teeter</li>
+                    <li>whole_foods</li>
+                </ul>
+                <p>Good Names:</p>
+                <ul>
+                    <li>International Produce Training</li>
+                    <li>Harris Teeter</li>
+                    <li>Whole Foods</li>
+                </ul>
+            </div>
+        </section>
+    </div>
 </div>
 {% endblock %}

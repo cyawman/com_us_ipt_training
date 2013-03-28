@@ -10,7 +10,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *
  * @ORM\Table(name="lessonplan")
  * @ORM\HasLifecycleCallbacks
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Yawman\TrainingBundle\Entity\LessonPlanRepository")
  */
 class LessonPlan {
 
@@ -62,7 +62,7 @@ class LessonPlan {
     private $lessonPlanLessons;
     
     /**
-     * @ORM\ManyToMany(targetEntity="Company", mappedBy="lessonPlan")
+     * @ORM\ManyToMany(targetEntity="Company", mappedBy="lessonPlans")
      *
      */
     private $companys;

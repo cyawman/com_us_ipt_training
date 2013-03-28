@@ -15,8 +15,8 @@
                     <tr>
                         <td>{{ lessonPlanLesson.lesson.name }}</td>
                         <td>{{ lessonPlanLesson.lesson.description }}</td>
-                        <td>{% render url('user_lesson_status', {'userId': user.id, 'lessonId':lessonPlanLesson.lesson.id}) %}</td>
-                        <td><a href="{{ path('lesson_play', { 'lessonPlanId': lessonPlanLesson.lessonPlan.id, 'lessonId': lessonPlanLesson.lesson.id }) }}"><i class="icon-play"></i> Play</a></td>
+                        <td>{% render url('user_show_lesson_status', {'userId': user.id, 'lessonId':lessonPlanLesson.lesson.id}) %}</td>
+                        <td><a href="{{ path('user_play_lesson', { 'lessonPlanId': lessonPlanLesson.lessonPlan.id, 'lessonId': lessonPlanLesson.lesson.id }) }}"><i class="icon-play"></i> Play</a></td>
                     </tr>
                  {% endfor %}
             </tbody>
