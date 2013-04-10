@@ -37,26 +37,9 @@
         {% if entity.lessonPlanLessons %}
             <h2><a name="lesson-plans"></a>Lessons</h2>
             <p>Lessons are assigned to a Lesson Plan and given a Position for determining their order.</p>
-            <table class="table table-bordered table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for lessonPlanLesson in entity.lessonPlanLessons %}
-                        <tr>
-                            <td>{{ lessonPlanLesson.lesson.name }}</td>
-                            <td>{{ lessonPlanLesson.lesson.description }}</td>
-                            <td><a href="#">Remove</a></td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            {% render url('lessonplan_show_lesson_plan_lessons_table', {'id': entity.id}) %}
             <p>
-                <a class="btn btn-primary" href="#"><i class="icon-plus-sign icon-white"></i> Add Lesson(s)</a>
+                <a class="btn btn-primary" href="{{ path('lessonplan_edit_lessons', {'id': entity.id} ) }}"><i class="icon-wrench icon-white"></i> Edit Lesson Plan Lesson(s)</a>
             </p>
         {% endif %}
         

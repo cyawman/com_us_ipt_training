@@ -56,6 +56,29 @@ class LessonPlanController extends Controller {
 
         return $this->render('YawmanTrainingBundle:LessonPlan:show.html.twig', array('entity' => $entity, 'delete_form' => $deleteForm->createView()));
     }
+    
+    /**
+     * Displays a table of LessonPlanLessons sorted by Position
+     * 
+     * @Secure(roles="ROLE_ADMIN")
+     * @Route("/{id}/show-lesson-plan-lessons-table", requirements={"id" = "\d+"}, name="lessonplan_show_lesson_plan_lessons_table")
+     * @param int $id
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     */
+    public function showLessonPlanLessonsTable($id){
+        $em = $this->getDoctrine()->getManager();
+
+        $lessonPlan = $em->getRepository('YawmanTrainingBundle:LessonPlan')->find($id);
+
+        if (!$lessonPlan) {
+            throw $this->createNotFoundException('Unable to find LessonPlan entity.');
+        }
+        
+        $lessonPlanLessons = $em->getRepository('YawmanTrainingBundle:LessonPlanLesson')->findBy(array('lessonPlan' => $lessonPlan), array('position' => 'ASC'));
+
+        return $this->render('YawmanTrainingBundle:LessonPlan:_show-lesson-plan-lessons-table.html.twig', array('lessonPlanLessons' => $lessonPlanLessons));
+    }
 
     /**
      * Creates a new LessonPlan entity

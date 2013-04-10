@@ -1,0 +1,18 @@
+<table class="table table-bordered table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Position</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for lessonPlanLesson in lessonPlanLessons %}
+            <tr>
+                <td>{{ lessonPlanLesson.lesson.name }}</td>
+                <td>{{ lessonPlanLesson.lesson.description }}</td>
+                <td>{{ lessonPlanLesson.position }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
