@@ -31,13 +31,13 @@ class DashboardController extends Controller {
             $response = $this->forward('YawmanTrainingBundle:Dashboard:applicationDashboard');
         } else if ($this->get('security.context')->isGranted('ROLE_MANAGER')) {
             if ($hasLoggedIn) {
-                $response = $this->forward('YawmanTrainingBundle:Dashboard:companyDashboard', $user->getCompany()->getId());
+                $response = $this->forward('YawmanTrainingBundle:Dashboard:companyDashboard', array("id" => $user->getCompany()->getId()) );
             } else {
                 $response = $this->forward('YawmanTrainingBundle:Dashboard:managementWelcome');
             }
         } else {
             if ($hasLoggedIn) {
-                $response = $this->forward('YawmanTrainingBundle:Dashboard:userDashboard', $user->getId());
+                $response = $this->forward('YawmanTrainingBundle:Dashboard:userDashboard', array("id" => $user->getId()));
             } else {
                 $response = $this->forward('YawmanTrainingBundle:Dashboard:userWelcome');
             }
