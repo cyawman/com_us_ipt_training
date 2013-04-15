@@ -44,7 +44,11 @@
                     </tfoot>
                 </table>
             {% else %}
-                <div class="well well-small">No Recent User Activity</div>
+                <div class="well well-small">
+                    <p>No Recent User Activity</p>
+                    <p>You have no User activity because you either don't have any other Users or your Users haven't taken any Lessons yet.</p>
+                    <p>You can start by <a href="{{ path('user') }}">viewing all Users</a>. You can also <a href="{{ path('user_new') }}">create a new User</a>.</p></p>
+                </div>
             {% endif %}
         </section>
         <hr />

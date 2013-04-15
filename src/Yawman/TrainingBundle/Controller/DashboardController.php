@@ -33,13 +33,15 @@ class DashboardController extends Controller {
             if ($hasLoggedIn) {
                 $response = $this->forward('YawmanTrainingBundle:Dashboard:companyDashboard', array("id" => $user->getCompany()->getId()) );
             } else {
-                $response = $this->forward('YawmanTrainingBundle:Dashboard:managementWelcome');
+                //$response = $this->forward('YawmanTrainingBundle:Dashboard:managementWelcome');
+                $response = $this->forward('YawmanTrainingBundle:Dashboard:companyDashboard', array("id" => $user->getCompany()->getId()) );
             }
         } else {
             if ($hasLoggedIn) {
                 $response = $this->forward('YawmanTrainingBundle:Dashboard:userDashboard', array("id" => $user->getId()));
             } else {
-                $response = $this->forward('YawmanTrainingBundle:Dashboard:userWelcome');
+                //$response = $this->forward('YawmanTrainingBundle:Dashboard:userWelcome');
+                $response = $this->forward('YawmanTrainingBundle:Dashboard:userDashboard', array("id" => $user->getId()));
             }
         }
 
