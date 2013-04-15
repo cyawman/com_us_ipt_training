@@ -1,0 +1,5 @@
+{% if( role == "ROLE_USER" ) %}
+    <a href="{{ path("user_promote", {"id": entity.id, "companyId": companyId}) }}"><i class="icon-arrow-up"></i> Promote</a>
+{% elseif( role == "ROLE_MANAGER" )  %}
+    <a href="{{ path("user_demote", {"id": entity.id, "companyId": companyId}) }}"><i class="icon-arrow-down"></i> Demote</a>
+{% endif %}

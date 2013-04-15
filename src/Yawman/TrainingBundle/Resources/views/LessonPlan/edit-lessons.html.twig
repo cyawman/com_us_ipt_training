@@ -46,6 +46,7 @@
                     <button class="btn btn-primary" type="submit"><i class="icon-ok icon-white"></i> Save</button>
                     {{ form_row(update_lessons_form._token) }}
                 </form>
+                <p><p><a href="{{ path('lessonplan') }}"><i class="icon-backward"></i> Back to the list</a></p></p>
             {% else %}
                 <div class="well well-small">No Lessons in this Lesson Plan</div>
             {% endif %}

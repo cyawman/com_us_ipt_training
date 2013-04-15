@@ -68,27 +68,23 @@ class UserController extends Controller {
         }
 
         $this->verifyUserActionPrivileges($this->getUser(), $entity);
+        
+        $deleteForm = $this->createDeleteForm($id);
 
-        return $this->render('YawmanTrainingBundle:User:show.html.twig', array('entity' => $entity));
+        return $this->render('YawmanTrainingBundle:User:show.html.twig', array('entity' => $entity, 'delete_form' => $deleteForm->createView()));
     }
 
     /**
      * Displays a form to create a new User entity.
      * 
      * @Route("/new", name="user_new")
-     * @Secure(roles="ROLE_MANAGER")
+     * @Secure(roles="ROLE_ADMIN")
      * @return \Symfony\Component\HttpFoundation\Response
      * @throws AccessDeniedException
      */
     public function newAction() {
         $entity = new User();
         $form = $this->createForm(new UserType(), $entity);
-
-        if (false === $this->get('security.context')->isGranted('ROLE_ADMIN')) {
-            $form->remove('company');
-            $form->remove('groups');
-        }
-
         return $this->render('YawmanTrainingBundle:User:new.html.twig', array('entity' => $entity, 'form' => $form->createView()));
     }
 
@@ -96,7 +92,7 @@ class UserController extends Controller {
      * Creates a new User entity.
      * 
      * @Route("/create", requirements={"_method" = "post"}, name="user_create")
-     * @Secure(roles="ROLE_MANAGER")
+     * @Secure(roles="ROLE_ADMIN")
      * @param \Symfony\Component\HttpFoundation\Request $request
      * @return \Symfony\Component\HttpFoundation\Response
      * @throws DuplicateEntryException
@@ -108,10 +104,6 @@ class UserController extends Controller {
         $user = $this->getUser();
 
         $form = $this->createForm(new UserType(), $entity);
-        if (false === $this->get('security.context')->isGranted('ROLE_ADMIN')) {
-            $form->remove('company');
-            $form->remove('groups');
-        }
         $form->bind($request);
 
         try {
@@ -122,14 +114,6 @@ class UserController extends Controller {
                     $form->addError(new FormError('This email address is already in use.'));
                     throw new DuplicateEntryException('Email address must be unique');
                 }
-
-                if (false === $this->get('security.context')->isGranted('ROLE_ADMIN')) {
-                    $group = $em->getRepository('YawmanTrainingBundle:Group')->findOneBy(array('role' => 'ROLE_USER'));
-                    $entity->addGroup($group);
-                    $entity->setCompany($user->getCompany());
-                }
-
-                $entity->setUsername($data->getEmail());
 
                 $factory = $this->get('security.encoder_factory');
                 $encoder = $factory->getEncoder($entity);
@@ -297,11 +281,6 @@ class UserController extends Controller {
 
                 $data = $form->getData();
 
-                if ($data->getPassword() != $data->getPasswordConfirm()) {
-                    $form->addError(new FormError('New Password and Confirmation Password did not match'));
-                    throw new PasswordConfirmationException('The new password did not match the confirmation password');
-                }
-
                 $factory = $this->get('security.encoder_factory');
                 $encoder = $factory->getEncoder($entity);
 
@@ -323,6 +302,112 @@ class UserController extends Controller {
         }
 
         return $this->render('YawmanTrainingBundle:User:edit-password.html.twig', array('entity' => $entity, 'form' => $form->createView()));
+    }
+    
+    /**
+     * Determine whether a User should be promoted or demoted based on their current role.
+     * 
+     * @Route("/{id}/promote-demote/{companyId}", requirements={"id" = "\d+", "companyId" = "\d+"}, name="user_promote_demote")
+     * @Secure(roles="ROLE_MANAGER")
+     * @param int $id
+     * @param int $companyId
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     */
+    public function promoteDemoteAction($id, $companyId){
+        $em = $this->getDoctrine()->getManager();
+
+        $entity = $em->getRepository('YawmanTrainingBundle:User')->find($id);
+
+        $user = $this->getUser();
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find User entity.');
+        }
+
+        $this->verifyUserActionPrivileges($user, $entity);
+
+        $roles = $em->getRepository('YawmanTrainingBundle:User')->getUserRolesArray($entity->getUsername());
+        
+        if(in_array('ROLE_ADMIN', $roles[0])){
+            $role = 'ROLE_ADMIN';
+        }elseif(in_array('ROLE_MANAGER', $roles[0])){
+            $role = 'ROLE_MANAGER';
+        }else{
+            $role = 'ROLE_USER';
+        }
+        
+        return $this->render('YawmanTrainingBundle:User:_user-promote-demote.html.twig', array('entity' => $entity, 'role' => $role, 'companyId' => $companyId));
+    }
+    
+    /**
+     * Promotes a User entity to the Manager Group
+     * 
+     * @Route("/{id}/promote/{companyId}", requirements={"id" = "\d+", "companyId" = "\d+"}, name="user_promote")
+     * @Secure(roles="ROLE_MANAGER")
+     * @param int $id
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     */
+    public function promoteAction($id, $companyId){
+        $em = $this->getDoctrine()->getManager();
+
+        $entity = $em->getRepository('YawmanTrainingBundle:User')->find($id);
+
+        $user = $this->getUser();
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find User entity.');
+        }
+
+        $this->verifyUserActionPrivileges($user, $entity);
+        
+        $managerGroup = $em->getRepository('YawmanTrainingBundle:Group')->findOneBy(array('role' => 'ROLE_MANAGER'));
+        $userGroup = $em->getRepository('YawmanTrainingBundle:Group')->findOneBy(array('role' => 'ROLE_USER'));
+        $entity->addGroup($managerGroup);
+        $entity->removeGroup($userGroup);
+
+        $em->persist($entity);
+        $em->flush();
+
+        $this->get('session')->setFlash('success', 'The User was successfully promoted!');
+
+        return $this->redirect($this->generateUrl('company_show_users', array('id' => $companyId)));
+    }
+    
+    /**
+     * Demotes a User entity to the User Group
+     * 
+     * @Route("/{id}/demote/{companyId}", requirements={"id" = "\d+", "companyId" = "\d+"}, name="user_demote")
+     * @Secure(roles="ROLE_MANAGER")
+     * @param int $id
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     */
+    public function demoteAction($id, $companyId){
+        $em = $this->getDoctrine()->getManager();
+
+        $entity = $em->getRepository('YawmanTrainingBundle:User')->find($id);
+
+        $user = $this->getUser();
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find User entity.');
+        }
+
+        $this->verifyUserActionPrivileges($user, $entity);
+        
+        $managerGroup = $em->getRepository('YawmanTrainingBundle:Group')->findOneBy(array('role' => 'ROLE_MANAGER'));
+        $userGroup = $em->getRepository('YawmanTrainingBundle:Group')->findOneBy(array('role' => 'ROLE_USER'));
+        $entity->removeGroup($managerGroup);
+        $entity->addGroup($userGroup);
+
+        $em->persist($entity);
+        $em->flush();
+
+        $this->get('session')->setFlash('success', 'The User was successfully demoted!');
+
+        return $this->redirect($this->generateUrl('company_show_users', array('id' => $companyId)));
     }
 
     /**
@@ -636,10 +721,9 @@ class UserController extends Controller {
     private function createDeleteForm($id) {
         return $this->createFormBuilder(array('id' => $id))
                         ->add('id', 'hidden')
-                        ->getForm()
-        ;
+                        ->getForm();
     }
-
+    
     /**
      * Verifies the user has the appropriate privileges to modify the entity.
      * 

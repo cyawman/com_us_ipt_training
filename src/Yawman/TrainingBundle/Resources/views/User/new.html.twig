@@ -2,28 +2,40 @@
 
 {% block headTitle %}User Creation{% endblock %}
 
-{% block bodyTitle %}<h1>User creation</h1>{% endblock %}
+{% block bodyTitle %}Create a New User{% endblock %}
 
 {% block content %}
-<form action="{{ path('user_create') }}" method="post" {{ form_enctype(form) }}>
-    {% if form.get('errors') is not empty %}
-    <div class="alert alert-error alert-block">{{ form_errors(form) }}</div>
-    {% endif %}
-
-    {{ form_row(form.email) }}
-    {{ form_row(form.password) }}
-
-    {{ form_rest(form) }}
-    <p>
-        <button class="btn btn-primary" type="submit">Create</button>
-    </p>
-</form>
-
-<ul class="record_actions unstyled">
-    <li>
-        <a href="{{ path('user') }}">
-            Back to the list
-        </a>
-    </li>
-</ul>
+<div class="row-fluid">
+    <div class="span12">
+        <p class="lead">Add a new User to the system.</p>
+        <hr />
+    </div>
+</div>
+<div class="row-fluid">
+    <div class="span7">
+        <p>You can assign a User to an existing Company. Doing so will assign all of the Lesson Plans for that Company to this new User.</p>
+        <form action="{{ path('user_create') }}" method="post" {{ form_enctype(form) }}>
+            {% if form.get('errors') is not empty %}
+            <div class="alert alert-error alert-block">{{ form_errors(form) }}</div>
+            {% endif %}
+            {{ form_rest(form) }}
+            <p>
+                <button class="btn btn-primary" type="submit"><i class="icon-plus-sign icon-white"></i> Create</button>
+            </p>
+        </form>
+        <a href="{{ path('user') }}"><i class="icon-backward"></i> Back to the list</a>
+    </div>
+    <div class="span5">
+        <section>
+            <header><h2>Username and Email</h2></header>
+            <div class="well">
+                <p>A user can login to the system using their username or email address. Not all users are expected to have an email address but this field is required. If the user doesnt have an email address then simply stub in one using their username + their Company website. For example, yawman@aldi.com. We don't send email out to the Users at this time so a functional email address is not needed yet.</p>
+            </div>
+            <header><h2>Groups</h2></header>
+            <div class="well">
+                <p>All new Users will typically be assigned to the "user" group. This means they have limited permissions across the system. The "manager" group should be given to 1 or 2 people within a Company to manage the Users of their Company. You should never assign the "admin" group unless you want this User to have the ability to create/delete Users, Companies, Lessons and Lesson Plans.</p>
+            </div>
+        </section>
+    </div>
+</div>
 {% endblock %}

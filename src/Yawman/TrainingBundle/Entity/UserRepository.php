@@ -20,7 +20,6 @@ class UserRepository extends EntityRepository implements UserProviderInterface
             ->setParameter('username', $username)
             ->setParameter('email', $username)
             ->getQuery();
-        ;
 
         try {
             // The Query::getSingleResult() method throws an exception
@@ -31,6 +30,24 @@ class UserRepository extends EntityRepository implements UserProviderInterface
         }
 
         return $user;
+    }
+    
+    public function getUserRolesArray($username){
+        $q = $this
+            ->createQueryBuilder('u')
+            ->select('g.role')
+            ->leftJoin('u.groups', 'g')
+            ->where('u.username = :username')
+            ->setParameter('username', $username)
+            ->getQuery();
+        
+        try {
+            $roles = $q->getArrayResult();
+        } catch (NoResultException $e) {
+            throw new UsernameNotFoundException(sprintf('Unable to find an active YawmanTrainingBundle:User object identified by "%s".', $username), null, 0, $e);
+        }
+        
+        return $roles;
     }
 
     public function refreshUser(UserInterface $user)

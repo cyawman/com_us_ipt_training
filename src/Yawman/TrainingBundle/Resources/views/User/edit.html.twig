@@ -2,36 +2,36 @@
 
 {% block headTitle %}User Edit{% endblock %}
 
-{% block bodyTitle %}<h1>User edit</h1>{% endblock %}
+{% block bodyTitle %}{{ entity.username }}{% endblock %}
 
 {% block content %}
-<form action="{{ path('user_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
-    {% if edit_form.get('errors') is not empty %}
-    <div class="alert alert-error alert-block">{{ form_errors(edit_form) }}</div>
-    {% endif %}
-
-    {{ form_row(edit_form.email) }}
-
-    {{ form_rest(edit_form) }}
-    <p>
-        <button type="submit">Edit</button>
-    </p>
-</form>
-
-<ul class="record_actions">
-    <li>
-        <a href="{{ path('user') }}">
-            Back to the list
-        </a>
-    </li>
-    <li>
-        <a href="{{ path('user_edit_password', { 'id': entity.id }) }}">Change password</a>
-    </li>
-    <li>
-        <form action="{{ path('user_delete', { 'id': entity.id }) }}" method="post">
-            {{ form_widget(delete_form) }}
-            <button type="submit">Delete</button>
+<div class="row-fluid">
+    <div class="span12">
+        <p class="lead">Changing the Name of the Company is harmless.</p>
+        <hr />
+    </div>
+</div>
+<div class="row-fluid">
+    <div class="span7">
+        <form action="{{ path('user_update', { 'id': entity.id }) }}" method="post" {{ form_enctype(edit_form) }}>
+            {% if edit_form.get('errors') is not empty %}
+                <div class="alert alert-error alert-block">{{ form_errors(edit_form) }}</div>
+            {% endif %}
+            
+            {{ form_rest(edit_form) }}
+            <p><button class="btn btn-primary" type="submit"><i class="icon-ok icon-white"></i> Save</button></p>
+            <p><a href="{{ path('user') }}"><i class="icon-backward"></i> Back to the list</a></p>
         </form>
-    </li>
-</ul>
+        
+    </div>
+    <div class="span5">
+        <section>
+            <header><h2>Change Password</h2></header>
+            <div class="well">
+                <p>You can change this Users password but be sure to let the User know what you changed it to afterwards.</p>
+                <p><a class="btn btn-danger" href="{{ path('user_edit_password', { 'id': entity.id }) }}"><i class="icon-lock icon-white"></i> Change password</a></p>
+            </div>
+        </section>
+    </div>
+</div>
 {% endblock %}

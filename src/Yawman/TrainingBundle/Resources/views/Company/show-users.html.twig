@@ -28,14 +28,24 @@
                 <tbody>
                     {% for user in entity.users %}
                         <tr>
-                            <td>{{ user.email }}</td>
+                            <td><a href="{{ path('user_show', { 'id': user.id }) }}">{{ user.username }}</a></td>
                             <td>{% render url('user_show_remaining_lessons', {'id': user.id}) %}</td>
                             <td>
                                 {% for group in user.groups %}
                                     {{ group.name|capitalize }}
                                 {% endfor %}
                             </td>
-                            <td><a href="{{ path("company_remove_user", {"companyId": entity.id, "userId": user.id, "redirect": path('dashboard') }) }}">Remove</a></td>
+                            <td>
+                                <a href="{{ path('user_dashboard', { 'id': user.id }) }}"><i class="icon-list-alt"></i> Dashboard</a>
+                                <br />
+                                <a href="{{ path('user_show', { 'id': user.id }) }}"><i class="icon-eye-open"></i> View</a>
+                                <br />
+                                <a href="{{ path('user_edit', { 'id': user.id }) }}"><i class="icon-wrench"></i> Edit</a>
+                                <br />
+                                <a href="{{ path("company_remove_user", {"companyId": entity.id, "userId": user.id, "redirect": path('dashboard') }) }}"><i class="icon-minus"></i> Remove</a>
+                                <br />
+                                {% render url('user_promote_demote', {'id': user.id, 'companyId': entity.id}) %}
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -49,7 +59,13 @@
         </p>
     </div>
     <div class="span5">
-        
+        <section>
+            <h2>What is Promote/Demote?</h2>
+            <div class="well">
+                <p>Users in your Company can have 1 of 2 roles, User or Manager. Managers have the privilege of managing the User accounts for the entire Company. Managers can create, remove and edit the User accounts for their Company. Managers also have the ability to change passwords for their Users.</p>
+                <p>You can also demote Managers back to the basic User role.</p>
+            </div>
+        </section>
     </div>
 </div>
 {% endblock %}

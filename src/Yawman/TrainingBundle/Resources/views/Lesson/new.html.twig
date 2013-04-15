@@ -3,21 +3,33 @@
 
 {% block headTitle %}Lesson Creation{% endblock %}
 
-{% block bodyTitle %}<h1>Lesson creation</h1>{% endblock %}
+{% block bodyTitle %}Create a New Lesson{% endblock %}
 
 {% block content %}
-<form action="{{ path('lesson_create') }}" method="post" {{ form_enctype(form) }}>
-    {{ form_widget(form) }}
-    <p>
-        <button type="submit">Create</button>
-    </p>
-</form>
-
-<ul class="record_actions">
-    <li>
-        <a href="{{ path('lesson') }}">
-            Back to the list
-        </a>
-    </li>
-</ul>
+<div class="row-fluid">
+    <div class="span12">
+        <p class="lead">Add a new Lesson to the system.</p>
+        <hr />
+    </div>
+</div>
+<div class="row-fluid">
+    <div class="span7">
+        <p>After you create the Lesson you can assign it to a Lesson Plan.</p>
+        <form action="{{ path('lesson_create') }}" method="post" {{ form_enctype(form) }}>
+            {{ form_widget(form) }}
+            <p>
+                <button class="btn btn-primary" type="submit"><i class="icon-plus-sign icon-white"></i> Create</button>
+            </p>
+        </form>
+        <p><a href="{{ path('lesson') }}"><i class="icon-backward"></i> Back to the list</a></p>
+     </div>
+     <div class="span5">
+        <section>
+            <header><h2>Upload First</h2></header>
+            <div class="well">
+                <p>You have to upload the Articulate Training Lesson before you create the Lesson. After you upload you should see your folder as an option in the Path dropdown.</p>
+            </div>
+        </section>
+    </div>
+</div>
 {% endblock %}
