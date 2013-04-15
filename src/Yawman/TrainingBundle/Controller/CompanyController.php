@@ -165,7 +165,7 @@ class CompanyController extends Controller {
     /**
      * Creates a new Company entity
      * 
-     * @Secure(roles="ROLE_ADMIN")
+     * @Secure(roles="ROLE_MANAGER")
      * @Route("/{companyId}/create-user", requirements={"_method" = "post", "companyId" = "\d+"}, name="company_create_user")
      * @param \Symfony\Component\HttpFoundation\Request $request
      * @param int $companyId

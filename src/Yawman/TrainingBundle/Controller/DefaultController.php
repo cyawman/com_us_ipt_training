@@ -24,7 +24,7 @@ class DefaultController extends Controller {
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function indexAction() {
-        return $this->render('YawmanTrainingBundle:Default:index.html.twig');
+        return $this->redirect($this->generateUrl('dashboard'));
     }
 
     public function registrationAction() {
