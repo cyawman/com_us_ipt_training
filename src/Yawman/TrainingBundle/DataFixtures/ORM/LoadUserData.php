@@ -54,38 +54,6 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface, C
         
         $manager->persist($tyawmanUser);
         
-        $randomUser = new User();
-        $randomUser->setUsername('random');
-        $randomUser->setEmail('training-random@ipt.us.com');
-        $randomUser->setIsActive(true);
-        $randomEncoder = $encoder->getEncoder($randomUser);
-        $randomUser->setPassword($randomEncoder->encodePassword('cnasty328', $randomUser->getSalt()));
-        $randomUser->addGroup($manager->merge($this->getReference('user-group')));
-        
-        $manager->persist($randomUser);
-        
-        $managerUser = new User();
-        $managerUser->setUsername('manager');
-        $managerUser->setEmail('training-manager@ipt.us.com');
-        $managerUser->setIsActive(true);
-        $managerUser->setCompany($this->getReference('aldi-company'));
-        $managerEncoder = $encoder->getEncoder($managerUser);
-        $managerUser->setPassword($managerEncoder->encodePassword('cnasty328', $managerUser->getSalt()));
-        $managerUser->addGroup($manager->merge($this->getReference('manager-group')));
-        
-        $manager->persist($managerUser);
-        
-        $userUser = new User();
-        $userUser->setUsername('user');
-        $userUser->setEmail('training-user@ipt.us.com');
-        $userUser->setIsActive(true);
-        $userUser->setCompany($this->getReference('aldi-company'));
-        $userEncoder = $encoder->getEncoder($userUser);
-        $userUser->setPassword($userEncoder->encodePassword('cnasty328', $userUser->getSalt()));
-        $userUser->addGroup($manager->merge($this->getReference('user-group')));
-        
-        $manager->persist($userUser);
-        
         $manager->flush();
     }
     

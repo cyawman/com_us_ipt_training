@@ -19,14 +19,9 @@ class LoadCompanyData extends AbstractFixture implements OrderedFixtureInterface
         $iptCompany->setName('International Produce Training');
         $manager->persist($iptCompany);
         
-        $aldiCompany = new Company();
-        $aldiCompany->setName('Aldi');
-        $manager->persist($aldiCompany);
-        
         $manager->flush();
         
         $this->addReference('ipt-company', $iptCompany);
-        $this->addReference('aldi-company', $aldiCompany);
     }
     
     /**
