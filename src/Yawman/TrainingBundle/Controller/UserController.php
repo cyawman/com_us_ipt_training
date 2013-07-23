@@ -9,6 +9,7 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Yawman\TrainingBundle\Entity\User;
+use Yawman\TrainingBundle\Entity\UserLessonPlan;
 use Yawman\TrainingBundle\Exception\DuplicateEntryException;
 use Yawman\TrainingBundle\Exception\PasswordConfirmationException;
 use Yawman\TrainingBundle\Form\ChangePasswordType;
@@ -68,7 +69,7 @@ class UserController extends Controller {
         }
 
         $this->verifyUserActionPrivileges($this->getUser(), $entity);
-        
+
         $deleteForm = $this->createDeleteForm($id);
 
         return $this->render('YawmanTrainingBundle:User:show.html.twig', array('entity' => $entity, 'delete_form' => $deleteForm->createView()));
@@ -108,6 +109,8 @@ class UserController extends Controller {
 
         try {
             if ($form->isValid()) {
+                $logger = $this->get('logger');
+                
                 $data = $form->getData();
 
                 if ($em->getRepository('YawmanTrainingBundle:User')->findOneBy(array('email' => $data->getEmail()))) {
@@ -123,6 +126,22 @@ class UserController extends Controller {
 
                 $em->persist($entity);
                 $em->flush();
+                
+                $company = $entity->getCompany();
+                $logger->info("Creating a new User and assigning to " . $company->getName());
+                
+                $logger->info($company->getName() . " has " . count($company->getLessonPlans()) . " lesson plans");
+                
+                foreach ($company->getLessonPlans() as $lessonPlan) {
+                    $userLessonPlan = $em->getRepository('YawmanTrainingBundle:UserLessonPlan')->findOneBy(array('user' => $entity, 'lessonPlan' => $lessonPlan));
+                    if (!$userLessonPlan) {
+                        $logger->info("Assigning the Lesson Plan '" . $lessonPlan->getName() . "' to " . $entity->getUsername());
+                        $userLessonPlan = new UserLessonPlan();
+                        $userLessonPlan->setUser($entity);
+                        $userLessonPlan->setLessonPlan($lessonPlan);
+                        $em->persist($userLessonPlan);
+                    }
+                }
 
                 $this->get('session')->setFlash('success', 'The user was created successfully!');
 
@@ -131,7 +150,7 @@ class UserController extends Controller {
         } catch (DuplicateEntryException $e) {
             
         } catch (\Exception $e) {
-            
+            $logger->err($e->getMessage());
         }
 
         $this->get('session')->setFlash('error', 'There was an error creating the account.');
@@ -205,13 +224,13 @@ class UserController extends Controller {
             if ($editForm->isValid()) {
                 $data = $editForm->getData();
 
-                if($entity->getEmail() !== $data->getEmail()){
+                if ($entity->getEmail() !== $data->getEmail()) {
                     if ($em->getRepository('YawmanTrainingBundle:User')->findOneBy(array('email' => $data->getEmail()))) {
                         $editForm->addError(new FormError('This email address is already in use.'));
                         throw new DuplicateEntryException('Email address must be unique');
                     }
                 }
-                
+
                 $em->persist($entity);
                 $em->flush();
 
@@ -303,7 +322,7 @@ class UserController extends Controller {
 
         return $this->render('YawmanTrainingBundle:User:edit-password.html.twig', array('entity' => $entity, 'form' => $form->createView()));
     }
-    
+
     /**
      * Determine whether a User should be promoted or demoted based on their current role.
      * 
@@ -314,7 +333,7 @@ class UserController extends Controller {
      * @return \Symfony\Component\HttpFoundation\Response
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
-    public function promoteDemoteAction($id, $companyId){
+    public function promoteDemoteAction($id, $companyId) {
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('YawmanTrainingBundle:User')->find($id);
@@ -328,18 +347,18 @@ class UserController extends Controller {
         $this->verifyUserActionPrivileges($user, $entity);
 
         $roles = $em->getRepository('YawmanTrainingBundle:User')->getUserRolesArray($entity->getUsername());
-        
-        if(in_array('ROLE_ADMIN', $roles[0])){
+
+        if (in_array('ROLE_ADMIN', $roles[0])) {
             $role = 'ROLE_ADMIN';
-        }elseif(in_array('ROLE_MANAGER', $roles[0])){
+        } elseif (in_array('ROLE_MANAGER', $roles[0])) {
             $role = 'ROLE_MANAGER';
-        }else{
+        } else {
             $role = 'ROLE_USER';
         }
-        
+
         return $this->render('YawmanTrainingBundle:User:_user-promote-demote.html.twig', array('entity' => $entity, 'role' => $role, 'companyId' => $companyId));
     }
-    
+
     /**
      * Promotes a User entity to the Manager Group
      * 
@@ -349,7 +368,7 @@ class UserController extends Controller {
      * @return \Symfony\Component\HttpFoundation\Response
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
-    public function promoteAction($id, $companyId){
+    public function promoteAction($id, $companyId) {
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('YawmanTrainingBundle:User')->find($id);
@@ -361,7 +380,7 @@ class UserController extends Controller {
         }
 
         $this->verifyUserActionPrivileges($user, $entity);
-        
+
         $managerGroup = $em->getRepository('YawmanTrainingBundle:Group')->findOneBy(array('role' => 'ROLE_MANAGER'));
         $userGroup = $em->getRepository('YawmanTrainingBundle:Group')->findOneBy(array('role' => 'ROLE_USER'));
         $entity->addGroup($managerGroup);
@@ -374,7 +393,7 @@ class UserController extends Controller {
 
         return $this->redirect($this->generateUrl('company_show_users', array('id' => $companyId)));
     }
-    
+
     /**
      * Demotes a User entity to the User Group
      * 
@@ -384,7 +403,7 @@ class UserController extends Controller {
      * @return \Symfony\Component\HttpFoundation\Response
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
-    public function demoteAction($id, $companyId){
+    public function demoteAction($id, $companyId) {
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('YawmanTrainingBundle:User')->find($id);
@@ -396,7 +415,7 @@ class UserController extends Controller {
         }
 
         $this->verifyUserActionPrivileges($user, $entity);
-        
+
         $managerGroup = $em->getRepository('YawmanTrainingBundle:Group')->findOneBy(array('role' => 'ROLE_MANAGER'));
         $userGroup = $em->getRepository('YawmanTrainingBundle:Group')->findOneBy(array('role' => 'ROLE_USER'));
         $entity->removeGroup($managerGroup);
@@ -448,7 +467,7 @@ class UserController extends Controller {
 
         return $this->redirect($this->generateUrl('user'));
     }
-    
+
     /**
      * Fetch the UserLessonPlan details
      * 
@@ -457,19 +476,49 @@ class UserController extends Controller {
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      * @param int $userId
      */
-    public function listLessonPlansAction($userId){
+    public function listLessonPlansAction($userId) {
         $em = $this->getDoctrine()->getEntityManager();
-        
+
         $user = $em->getRepository('YawmanTrainingBundle:User')->find($userId);
-        if(!$user){
+        if (!$user) {
             throw $this->createNotFoundException('Unable to find User entity.');
         }
-        
+
         $userLessonPlans = $em->getRepository('YawmanTrainingBundle:UserLessonPlan')->findBy(array('user' => $user));
-        
+
         return $this->render('YawmanTrainingBundle:User:_user-list-lesson-plans.html.twig', array('user' => $user, 'userLessonPlans' => $userLessonPlans));
     }
     
+    /**
+     * Fetch the UserLessonPlanLessons
+     * 
+     * @Secure(roles="ROLE_USER")
+     * @Route("/{userId}/list-lesson-plan-lessons/{lessonPlanId}", requirements={"userId" = "\d+", "lessonPlanId" = "\d+"}, name="user_list_lesson_plan_lessons")
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     * @param int $userId
+     * @param int $lessonPlanId
+     */
+    public function listLessonPlanLessonsAction($userId, $lessonPlanId) {
+        $em = $this->getDoctrine()->getEntityManager();
+
+        $user = $em->getRepository('YawmanTrainingBundle:User')->find($userId);
+        if (!$user) {
+            throw $this->createNotFoundException('Unable to find User entity.');
+        }
+
+        $lessonPlan = $em->getRepository('YawmanTrainingBundle:LessonPlan')->find($lessonPlanId);
+
+        if (!$lessonPlan) {
+            throw $this->createNotFoundException('Unable to find LessonPlan entity.');
+        }
+        
+        $userLessonPlan = $em->getRepository('YawmanTrainingBundle:UserLessonPlan')->findOneBy(array('user' => $user, 'lessonPlan' => $lessonPlan));
+        
+        $lessonPlanLessons = $em->getRepository('YawmanTrainingBundle:LessonPlanLesson')->findBy(array('lessonPlan' => $lessonPlan), array('position' => 'ASC'));
+
+        return $this->render('YawmanTrainingBundle:User:_user-list-lesson-plan-lessons.html.twig', array('user' => $user, 'userLessonPlan' => $userLessonPlan, 'lessonPlanLessons' => $lessonPlanLessons));
+    }
+
     /**
      * Fetch the UserLesson details
      * 
@@ -479,24 +528,24 @@ class UserController extends Controller {
      * @param int $userId
      * @param int $lessonId
      */
-    public function showLessonStatusAction($userId, $lessonId){
+    public function showLessonStatusAction($userId, $lessonId) {
         $em = $this->getDoctrine()->getManager();
-        
+
         $user = $em->getRepository('YawmanTrainingBundle:User')->find($userId);
-        if(!$user){
+        if (!$user) {
             throw $this->createNotFoundException('Unable to find User entity.');
         }
-        
+
         $lesson = $em->getRepository('YawmanTrainingBundle:Lesson')->find($lessonId);
-        if(!$lesson){
+        if (!$lesson) {
             throw $this->createNotFoundException('Unable to find Lesson entity.');
         }
-        
+
         $userLesson = $em->getRepository('YawmanTrainingBundle:UserLesson')->findOneBy(array('user' => $user, 'lesson' => $lesson));
-        
+
         return $this->render('YawmanTrainingBundle:User:_show-lesson-status.html.twig', array('user_lesson' => $userLesson));
     }
-    
+
     /**
      * Save the Lesson Plan and Lesson information in the Users session before playing the Lesson.
      * 
@@ -505,48 +554,48 @@ class UserController extends Controller {
      * @param int $lessonPlanId
      * @param int $lessonId
      */
-    public function playLessonAction($lessonPlanId, $lessonId){
+    public function playLessonAction($lessonPlanId, $lessonId) {
         $em = $this->getDoctrine()->getManager();
-        
+
         $lessonPlan = $em->getRepository('YawmanTrainingBundle:LessonPlan')->find($lessonPlanId);
-        if(!$lessonPlan){
+        if (!$lessonPlan) {
             throw $this->createNotFoundException('Unable to find LessonPlan entity.');
         }
-        
+
         $lesson = $em->getRepository('YawmanTrainingBundle:Lesson')->find($lessonId);
-        if(!$lesson){
+        if (!$lesson) {
             throw $this->createNotFoundException('Unable to find Lesson entity.');
         }
-        
+
         $userLessonPlan = $em->getRepository('YawmanTrainingBundle:UserLessonPlan')->findOneBy(array('lessonPlan' => $lessonPlan, 'user' => $this->getUser()));
-        if(!$userLessonPlan){
+        if (!$userLessonPlan) {
             throw new AccessDeniedException();
         }
-        
+
         /**
          * Create or Update the UserLesson.status
          */
         $userLesson = $em->getRepository('YawmanTrainingBundle:UserLesson')->findOneBy(array('user' => $this->getUser(), 'lesson' => $lesson));
-        if(!$userLesson){
+        if (!$userLesson) {
             $userLesson = new UserLesson();
             $userLesson->setUser($this->getUser());
             $userLesson->setLesson($lesson);
         }
         $userLesson->setStatus(UserLesson::INCOMPLETE);
-        
+
         $em->persist($userLesson);
-        
+
         $em->flush();
-        
+
         $session = $this->get('session');
         $session->set('activeLesson', array('lessonPlanId' => $lessonPlanId, 'lessonId' => $lessonId));
-        
+
         /**
          * @todo Redirect the user to the Lesson
          */
         return $this->redirect($lesson->generateLessonUrl());
     }
-    
+
     /**
      * Passes a User Lesson
      * 
@@ -555,69 +604,69 @@ class UserController extends Controller {
      * @return \Symfony\Component\HttpFoundation\Response
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
-    public function passAction(){
+    public function passAction() {
         $session = $this->get('session');
-        
+
         $activeLesson = $session->get('activeLesson');
-        if(!$activeLesson){
+        if (!$activeLesson) {
             throw $this->createNotFoundException('Unable to find the active Lesson entity.');
         }
-        
+
         $lessonPlanId = $activeLesson['lessonPlanId'];
         $lessonId = $activeLesson['lessonId'];
-        
+
         $em = $this->getDoctrine()->getManager();
-        
+
         $lessonPlan = $em->getRepository('YawmanTrainingBundle:LessonPlan')->find($lessonPlanId);
-        if(!$lessonPlan){
+        if (!$lessonPlan) {
             throw $this->createNotFoundException('Unable to find LessonPlan entity.');
         }
-        
+
         $lesson = $em->getRepository('YawmanTrainingBundle:Lesson')->find($lessonId);
-        if(!$lesson){
+        if (!$lesson) {
             throw $this->createNotFoundException('Unable to find Lesson entity.');
         }
-        
+
         $userLessonPlan = $em->getRepository('YawmanTrainingBundle:UserLessonPlan')->findOneBy(array('lessonPlan' => $lessonPlan, 'user' => $this->getUser()));
-        if(!$userLessonPlan){
+        if (!$userLessonPlan) {
             throw new AccessDeniedException();
         }
-        
+
         $lessonPlanLesson = $em->getRepository('YawmanTrainingBundle:LessonPlanLesson')->findOneBy(array('lessonPlan' => $lessonPlan, 'lesson' => $lesson));
-        if(!$lessonPlanLesson){
+        if (!$lessonPlanLesson) {
             throw $this->createNotFoundException('Unable to find LessonPlanLesson entity.');
         }
-        
+
         /**
          * Don't penelize a User for retaking a passed Lesson
          */
-        if($userLessonPlan->getPosition() <= $lessonPlanLesson->getPosition()){
-            $userLessonPlan->setPosition($lessonPlanLesson->getPosition()+1);
+        if ($userLessonPlan->getPosition() <= $lessonPlanLesson->getPosition()) {
+            $userLessonPlan->setPosition($lessonPlanLesson->getPosition() + 1);
             $em->persist($userLessonPlan);
         }
-        
+
         /**
          * Create or Update the UserLesson.status
          */
         $userLesson = $em->getRepository('YawmanTrainingBundle:UserLesson')->findOneBy(array('user' => $this->getUser(), 'lesson' => $lesson));
-        if(!$userLesson){
+        if (!$userLesson) {
             $userLesson = new UserLesson();
             $userLesson->setUser($this->getUser());
             $userLesson->setLesson($lesson);
         }
         $userLesson->setStatus(UserLesson::PASS);
-        
+
         $em->persist($userLesson);
-        
+
         $em->flush();
-        
+
         $session->getFlashBag()->add('success', 'Congratulations, you passed the ' . $lesson->getName() . ' lesson!');
-        
+
         $session->remove('activeLesson');
-        
+
         return $this->redirect($this->generateUrl('dashboard'));
     }
-    
+
     /**
      * Fails a Users Lesson
      * 
@@ -627,61 +676,61 @@ class UserController extends Controller {
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      * @throws AccessDeniedException
      */
-    public function failAction(){
+    public function failAction() {
         $session = $this->get('session');
-        
+
         $activeLesson = $session->get('activeLesson');
-        if(!$activeLesson){
+        if (!$activeLesson) {
             throw $this->createNotFoundException('Unable to find the Active Lesson entity.');
         }
-        
+
         $lessonPlanId = $activeLesson['lessonPlanId'];
         $lessonId = $activeLesson['lessonId'];
-        
+
         $em = $this->getDoctrine()->getManager();
-        
+
         $lessonPlan = $em->getRepository('YawmanTrainingBundle:LessonPlan')->find($lessonPlanId);
-        if(!$lessonPlan){
+        if (!$lessonPlan) {
             throw $this->createNotFoundException('Unable to find LessonPlan entity.');
         }
-        
+
         $lesson = $em->getRepository('YawmanTrainingBundle:Lesson')->find($lessonId);
-        if(!$lesson){
+        if (!$lesson) {
             throw $this->createNotFoundException('Unable to find Lesson entity.');
         }
-        
+
         $userLessonPlan = $em->getRepository('YawmanTrainingBundle:UserLessonPlan')->findOneBy(array('lessonPlan' => $lessonPlan, 'user' => $this->getUser()));
-        if(!$userLessonPlan){
+        if (!$userLessonPlan) {
             throw new AccessDeniedException();
         }
-        
+
         $lessonPlanLesson = $em->getRepository('YawmanTrainingBundle:LessonPlanLesson')->findOneBy(array('lessonPlan' => $lessonPlan, 'lesson' => $lesson));
-        if(!$lessonPlanLesson){
+        if (!$lessonPlanLesson) {
             throw $this->createNotFoundException('Unable to find LessonPlanLesson entity.');
         }
-        
+
         /**
          * Create or Update the UserLesson.status
          */
         $userLesson = $em->getRepository('YawmanTrainingBundle:UserLesson')->findOneBy(array('user' => $this->getUser(), 'lesson' => $lesson));
-        if(!$userLesson){
+        if (!$userLesson) {
             $userLesson = new UserLesson();
             $userLesson->setUser($this->getUser());
             $userLesson->setLesson($lesson);
         }
         $userLesson->setStatus(UserLesson::FAIL);
-        
+
         $em->persist($userLesson);
-        
+
         $em->flush();
-        
+
         $session->getFlashBag()->add('error', 'Oh no! You didn\'t successfully complete the ' . $lesson->getName() . ' lesson!');
-        
+
         $session->remove('activeLesson');
-        
+
         return $this->redirect($this->generateUrl('dashboard'));
     }
-    
+
     /**
      * Shows the number of remaining Lessons for a User
      * 
@@ -691,24 +740,24 @@ class UserController extends Controller {
      * @return \Symfony\Component\HttpFoundation\Response
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
-    public function showRemainingLessonsAction($id){
+    public function showRemainingLessonsAction($id) {
         $em = $this->getDoctrine()->getEntityManager();
-        
+
         $user = $em->getRepository('YawmanTrainingBundle:User')->find($id);
-        if(!$user){
+        if (!$user) {
             throw $this->createNotFoundException('Unable to find LessonPlanLesson entity.');
         }
-        
+
         $remainingLessons = 0;
-        
-        foreach($user->getUserLessonPlans() as $userLessonPlan){
+
+        foreach ($user->getUserLessonPlans() as $userLessonPlan) {
             $currentPosition = $userLessonPlan->getPosition();
             $lessonsInLessonPlan = count($userLessonPlan->getLessonPlan()->getLessonPlanLessons());
-            if($currentPosition < $lessonsInLessonPlan){
+            if ($currentPosition < $lessonsInLessonPlan) {
                 $remainingLessons += ($lessonsInLessonPlan - $currentPosition);
             }
         }
-        
+
         return $this->render('YawmanTrainingBundle:User:_show-remaining-lessons.html.twig', array('remainingLessons' => $remainingLessons));
     }
 
@@ -723,7 +772,7 @@ class UserController extends Controller {
                         ->add('id', 'hidden')
                         ->getForm();
     }
-    
+
     /**
      * Verifies the user has the appropriate privileges to modify the entity.
      * 

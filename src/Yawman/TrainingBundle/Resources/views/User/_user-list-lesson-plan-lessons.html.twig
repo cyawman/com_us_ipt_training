@@ -1,0 +1,21 @@
+{% for lessonPlanLesson in lessonPlanLessons %}
+    <tr>
+        <td>{{ lessonPlanLesson.lesson.name }}</td>
+        <td>{{ lessonPlanLesson.lesson.description }}</td>
+        <td>
+            {% if userLessonPlan.position >= lessonPlanLesson.position %}
+                {% render url('user_show_lesson_status', {'userId': user.id, 'lessonId':lessonPlanLesson.lesson.id}) %}
+            {% else %}
+                LOCKED
+            {% endif %}
+        </td>
+        <td>
+            {% if userLessonPlan.position > lessonPlanLesson.position %}
+                <a href="{{ path('user_play_lesson', { 'lessonPlanId': lessonPlanLesson.lessonPlan.id, 'lessonId': lessonPlanLesson.lesson.id }) }}"><i class="icon-repeat"></i> Replay</a>
+            {% endif %}
+            {% if userLessonPlan.position == lessonPlanLesson.position %}
+                <a href="{{ path('user_play_lesson', { 'lessonPlanId': lessonPlanLesson.lessonPlan.id, 'lessonId': lessonPlanLesson.lesson.id }) }}"><i class="icon-play"></i> Play</a>
+            {% endif %}
+        </td>
+    </tr>
+{% endfor %}

@@ -194,7 +194,7 @@ class LessonPlan {
      * @return LessonPlan
      */
     public function addLessonPlanLessons(\Yawman\TrainingBundle\Entity\LessonPlanLesson $lessonPlanLessons) {
-        $this->lessonPlanLessons[] = $lessonPlanLesson;
+        $this->lessonPlanLessons[] = $lessonPlanLessons;
 
         return $this;
     }
