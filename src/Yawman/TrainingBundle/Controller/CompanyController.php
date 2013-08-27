@@ -195,7 +195,6 @@ class CompanyController extends Controller {
             $data = $form->getData();
             $group = $em->getRepository('YawmanTrainingBundle:Group')->findOneBy(array('role' => 'ROLE_USER'));
 
-            $entity->setUsername($data->getEmail());
             $entity->setCompany($company);
             $entity->addGroup($group);
             $em->persist($entity);

@@ -8,10 +8,12 @@
     {% endif %}
     <form class="form-signin" action="{{ path('login_check') }}" method="post">
         <h2>Please Sign In</h2>
-            <input type="text" class="input-block-level" id="username" name="_username" value="{{ last_username }}" placeholder="Username" />
-            <input type="password" class="input-block-level" id="password" name="_password" placeholder="Password" />
-            <br />
-            <button class="btn btn-large btn-primary" type="submit">Sign In</button>
+        <label for="username">Username</label>
+        <input type="text" class="input-block-level" id="username" name="_username" value="{{ last_username }}" />
+        <label for="password">Password</label>
+        <input type="password" class="input-block-level" id="password" name="_password" />
+        <br />
+        <button class="btn btn-large btn-primary" type="submit">Sign In</button>
     </form>
 {% endblock %}
 
