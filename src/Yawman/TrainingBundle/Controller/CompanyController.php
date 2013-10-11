@@ -195,11 +195,17 @@ class CompanyController extends Controller {
             $data = $form->getData();
             $group = $em->getRepository('YawmanTrainingBundle:Group')->findOneBy(array('role' => 'ROLE_USER'));
 
+            $factory = $this->get('security.encoder_factory');
+            $encoder = $factory->getEncoder($entity);
+            $password = $encoder->encodePassword($data->getPassword(), $entity->getSalt());
+
+            $entity->setPassword($password);
+
             $entity->setCompany($company);
             $entity->addGroup($group);
             $em->persist($entity);
             $em->flush();
-            
+
             foreach ($company->getLessonPlans() as $lessonPlan) {
                 $userLessonPlan = $em->getRepository('YawmanTrainingBundle:UserLessonPlan')->findOneBy(array('user' => $entity, 'lessonPlan' => $lessonPlan));
                 if (!$userLessonPlan) {
@@ -403,7 +409,7 @@ class CompanyController extends Controller {
         if (!$user) {
             throw $this->createNotFoundException('Unable to find User entity.');
         }
-        
+
         if (false === $this->get('security.context')->isGranted('ROLE_ADMIN')) {
             if ($this->getUser()->getCompany()->getId() !== $company->getId()) {
                 throw new AccessDeniedException();
@@ -426,10 +432,10 @@ class CompanyController extends Controller {
 
         $request = $this->getRequest();
         $redirect = $this->generateUrl('company_show', array("id" => $companyId));
-        if($request->query->has('redirect')){
+        if ($request->query->has('redirect')) {
             $redirect = $request->query->get('redirect');
         }
-        
+
         return $this->redirect($redirect);
     }
 
