@@ -43,7 +43,7 @@ class Lesson {
      * @ORM\Column(name="path", type="string", length=255, nullable=false)
      */
     private $path;
-    
+
     /**
      * @ORM\Column(name="created_at", type="datetime")
      */
@@ -133,7 +133,7 @@ class Lesson {
     public function setPath($path) {
         $this->path = $path;
     }
-    
+
     /**
      * Get createdAt
      * 
@@ -205,10 +205,10 @@ class Lesson {
      * 
      * @return string
      */
-    public function generateLessonUrl(){
-        return '/uploads/'.$this->path.'/player.html';
+    public function generateLessonUrl() {
+        return '/uploads/' . $this->path . '/presentation.html';
     }
-    
+
     /**
      * Now we tell doctrine that before we persist or update we call the updatedTimestamps() function.
      *
@@ -222,7 +222,7 @@ class Lesson {
             $this->setCreatedAt(new \DateTime(date('Y-m-d H:i:s')));
         }
     }
-    
+
     /**
      * Return a string of the entity
      * 
@@ -231,5 +231,5 @@ class Lesson {
     public function __toString() {
         return sprintf('%s', $this->name);
     }
-    
+
 }
