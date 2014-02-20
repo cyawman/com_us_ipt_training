@@ -30,19 +30,9 @@ class DashboardController extends Controller {
         if ($this->get('security.context')->isGranted('ROLE_ADMIN')) {
             $response = $this->forward('YawmanTrainingBundle:Dashboard:applicationDashboard');
         } else if ($this->get('security.context')->isGranted('ROLE_MANAGER')) {
-            if ($hasLoggedIn) {
-                $response = $this->forward('YawmanTrainingBundle:Dashboard:companyDashboard', array("id" => $user->getCompany()->getId()) );
-            } else {
-                //$response = $this->forward('YawmanTrainingBundle:Dashboard:managementWelcome');
-                $response = $this->forward('YawmanTrainingBundle:Dashboard:companyDashboard', array("id" => $user->getCompany()->getId()) );
-            }
+            $response = $this->forward('YawmanTrainingBundle:Dashboard:companyDashboard', array("id" => $user->getCompany()->getId()) );
         } else {
-            if ($hasLoggedIn) {
-                $response = $this->forward('YawmanTrainingBundle:Dashboard:userDashboard', array("id" => $user->getId()));
-            } else {
-                //$response = $this->forward('YawmanTrainingBundle:Dashboard:userWelcome');
-                $response = $this->forward('YawmanTrainingBundle:Dashboard:userDashboard', array("id" => $user->getId()));
-            }
+            $response = $this->forward('YawmanTrainingBundle:Dashboard:userDashboard', array("id" => $user->getId()));
         }
 
         if (!$hasLoggedIn) {
@@ -121,7 +111,7 @@ class DashboardController extends Controller {
             }
         }
         
-        $recentUserActivity = $em->getRepository('YawmanTrainingBundle:UserLesson')->findByCompanyUsers($company);
+        $recentUserActivity = $em->getRepository('YawmanTrainingBundle:UserLesson')->findByCompanyUsers($company, null, 5);
         
         return $this->render('YawmanTrainingBundle:Dashboard:company-dashboard.html.twig', array('recentUserActivity' => $recentUserActivity, 'user' => $this->getUser(), 'isCompanyUser' => $isCompanyUser, 'company' => $company));
     }
