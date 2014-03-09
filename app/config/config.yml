@@ -60,3 +60,7 @@ swiftmailer:
     username:  "%mailer_user%"
     password:  "%mailer_password%"
     spool:     { type: memory }
+services:
+    custom_view_finder:
+      class:  "%custom_view_finder.class%"
+      arguments: ["%custom_views%"]

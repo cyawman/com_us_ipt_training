@@ -85,7 +85,13 @@ class DashboardController extends Controller {
             }
         }
         
-        return $this->render('YawmanTrainingBundle:Dashboard:user-dashboard.html.twig', array('user' => $user));
+        $customViewFinder = $this->get('custom_view_finder');
+        
+        $companyId = $user->getCompany()->getId();
+        
+        $view = $customViewFinder->retrieveView('user-dashboard-'.$companyId, 'YawmanTrainingBundle:Dashboard:user-dashboard.html.twig');
+        
+        return $this->render($view, array('user' => $user));
     }
 
     /**
@@ -113,7 +119,11 @@ class DashboardController extends Controller {
         
         $recentUserActivity = $em->getRepository('YawmanTrainingBundle:UserLesson')->findByCompanyUsers($company, null, 5);
         
-        return $this->render('YawmanTrainingBundle:Dashboard:company-dashboard.html.twig', array('recentUserActivity' => $recentUserActivity, 'user' => $this->getUser(), 'isCompanyUser' => $isCompanyUser, 'company' => $company));
+        $customViewFinder = $this->get('custom_view_finder');
+        
+        $view = $customViewFinder->retrieveView('company-dashboard-'.$id, 'YawmanTrainingBundle:Dashboard:company-dashboard.html.twig');
+        
+        return $this->render($view, array('recentUserActivity' => $recentUserActivity, 'user' => $this->getUser(), 'isCompanyUser' => $isCompanyUser, 'company' => $company));
     }
 
     /**
