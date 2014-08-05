@@ -51,7 +51,7 @@
                 </tbody>
             </table>
             <p>
-                <a class="btn btn-primary" href="{{ path('company_list_available_users', { 'companyId': entity.id }) }}"><i class="icon-plus-sign icon-white"></i> Add User(s)</a>
+                <a class="btn btn-primary" href="{{ path('company_new_user', {'id': entity.id}) }}"><i class="icon-plus-sign icon-white"></i> Create User</a>
             </p>
         {% endif %}
         <p>
