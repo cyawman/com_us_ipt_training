@@ -18,12 +18,12 @@
 <div class="row-fluid">
     <div class="span7">
         <section>
-            <header><h2>Save A Lot Lessons</h2></header>
+            <header><h2>Save A Lot Lesson</h2></header>
             {% render url('user_list_lesson_plans', {'userId': user.id}) %}
         </section>
      </div>
     <div class="span5">
-        {# include 'YawmanTrainingBundle:Dashboard:_save-a-lot-training-courses-sidebar.html.twig' #}
+        {% include 'YawmanTrainingBundle:Dashboard:_save-a-lot-training-courses-sidebar.html.twig' %}
         
         {% include 'YawmanTrainingBundle:Dashboard:_save-a-lot-resources-sidebar.html.twig' %}
     </div>
