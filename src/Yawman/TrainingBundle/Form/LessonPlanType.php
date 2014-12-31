@@ -9,9 +9,9 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 class LessonPlanType extends AbstractType {
 
     public function buildForm(FormBuilderInterface $builder, array $options) {
-        $builder
-                ->add('name')
-                ->add('description', 'textarea', array('max_length' => 255));
+        $builder->add('name')
+                ->add('description', 'textarea', array('max_length' => 255))
+                ->add('successive', 'checkbox', array('required' => false));
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver) {

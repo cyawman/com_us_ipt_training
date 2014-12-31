@@ -38,6 +38,13 @@ class LessonPlan {
     private $description;
     
     /**
+     * @var boolean
+     * 
+     * @ORM\Column(name="successive", type="boolean")
+     */
+    private $successive = false;
+    
+    /**
      * @ORM\Column(name="created_at", type="datetime")
      */
     protected $createdAt;
@@ -121,6 +128,24 @@ class LessonPlan {
         $this->description = $description;
     }
     
+    /**
+     * Get successive
+     * 
+     * @return boolean
+     */
+    public function getSuccessive() {
+        return $this->successive;
+    }
+
+    /**
+     * Set successive
+     * 
+     * @param boolean $successive
+     */
+    public function setSuccessive($successive) {
+        $this->successive = $successive;
+    }
+        
     /**
      * Get createdAt
      * 

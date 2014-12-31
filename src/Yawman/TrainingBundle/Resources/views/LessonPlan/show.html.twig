@@ -30,6 +30,16 @@
                     <th>Description</th>
                     <td>{{ entity.description }}</td>
                 </tr>
+                <tr>
+                    <th>Successive</th>
+                    <td>
+                        {% if entity.successive %}
+                        Yes, you must pass the first lesson before moving on to the second.
+                        {% else %}
+                        No, all lessons are immediately available.
+                        {% endif %}
+                    </td>
+                </tr>
             </tbody>
         </table>
         <p><a class="btn btn-primary" href="{{ path('lessonplan_edit', { 'id': entity.id }) }}"><i class="icon-wrench icon-white"></i> Edit Lesson Plan</a></p>
