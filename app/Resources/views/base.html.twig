@@ -14,7 +14,7 @@
           <![endif]-->
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     </head>
-    <body id="{{ 'company-'~app.user.company.id }}" class="{% block bodyClass %}{% endblock %}">
+    <body id="{% if app.user %}{{ 'company-'~app.user.company.id }}{% endif %}" class="{% block bodyClass %}{% endblock %}">
         <div class="navbar navbar-inverse navbar-fixed-top">
             <div class="navbar-inner">
                 <div class="container">
