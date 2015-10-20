@@ -581,7 +581,10 @@ class UserController extends Controller {
             $userLesson->setUser($this->getUser());
             $userLesson->setLesson($lesson);
         }
-        $userLesson->setStatus(UserLesson::INCOMPLETE);
+
+        if ($userLesson->getStatus() != UserLesson::PASS) {
+            $userLesson->setStatus(UserLesson::INCOMPLETE);
+        }
 
         $em->persist($userLesson);
 
@@ -718,7 +721,10 @@ class UserController extends Controller {
             $userLesson->setUser($this->getUser());
             $userLesson->setLesson($lesson);
         }
-        $userLesson->setStatus(UserLesson::FAIL);
+
+        if ($userLesson->getStatus() != UserLesson::PASS) {
+            $userLesson->setStatus(UserLesson::FAIL);
+        }
 
         $em->persist($userLesson);
 
