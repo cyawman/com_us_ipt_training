@@ -12,3 +12,11 @@ tfoot form div {display:inline;}
 tfoot form button.btn {padding:1px 0; margin:0;}
 .table form {margin:0;}
 .table form button {padding:0;}
+.table-no-border>thead>tr>th, 
+.table-no-border>tbody>tr>th, 
+.table-no-border>tfoot>tr>th, 
+.table-no-border>thead>tr>td, 
+.table-no-border>tbody>tr>td, 
+.table-no-border>tfoot>tr>td {
+  border-top: none; 
+}
