@@ -45,6 +45,8 @@
                                 <a href="{{ path("company_remove_user", {"companyId": entity.id, "userId": user.id, "redirect": path('dashboard') }) }}"><i class="icon-minus"></i> Remove</a>
                                 <br />
                                 {% render url('user_promote_demote', {'id': user.id, 'companyId': entity.id}) %}
+                                <br />
+                                <a href="{{ path("company_reset_user_lessons", {"companyId": entity.id, "userId": user.id }) }}"><i class="icon-refresh"></i> Reset Lessons</a>
                             </td>
                         </tr>
                     {% endfor %}

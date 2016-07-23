@@ -420,10 +420,7 @@ class CompanyController extends Controller {
         $em->persist($user);
 
         foreach ($company->getLessonPlans() as $lessonPlan) {
-            $userLessonPlan = $em->getRepository('YawmanTrainingBundle:UserLessonPlan')->findOneBy(array('user' => $user, 'lessonPlan' => $lessonPlan));
-            if ($userLessonPlan) {
-                $em->remove($userLessonPlan);
-            }
+            $em->getRepository('YawmanTrainingBundle:UserLessonPlan')->removeUserFromLessonPlan($user, $lessonPlan);
         }
 
         $em->flush();
@@ -435,6 +432,49 @@ class CompanyController extends Controller {
         if ($request->query->has('redirect')) {
             $redirect = $request->query->get('redirect');
         }
+
+        return $this->redirect($redirect);
+    }
+    
+    /**
+     * @Secure(roles="ROLE_MANAGER")
+     * @Route("/{companyId}/reset-user-lessons/{userId}", requirements={"companyId" = "\d+", "userId" = "\d+"}, name="company_reset_user_lessons")
+     * @param int $companyId
+     * @param int $userId
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     */
+    public function resetUserLessonsAction($companyId, $userId) {
+        $em = $this->getDoctrine()->getEntityManager();
+
+        $company = $em->getRepository('YawmanTrainingBundle:Company')->find($companyId);
+        if (!$company) {
+            throw $this->createNotFoundException('Unable to find Company entity.');
+        }
+
+        $user = $em->getRepository('YawmanTrainingBundle:User')->find($userId);
+        if (!$user) {
+            throw $this->createNotFoundException('Unable to find User entity.');
+        }
+
+        if (false === $this->get('security.context')->isGranted('ROLE_ADMIN')) {
+            if ($this->getUser()->getCompany()->getId() !== $company->getId()) {
+                throw new AccessDeniedException();
+            }
+        }
+
+        $user->setCompany(null);
+        $em->persist($user);
+
+        foreach ($company->getLessonPlans() as $lessonPlan) {
+            $em->getRepository('YawmanTrainingBundle:UserLessonPlan')->removeAllUserLessonByUserAndLessonPlan($user, $lessonPlan);
+        }
+
+        $em->flush();
+
+        $this->get('session')->setFlash('success', 'The reset was successful!');
+
+        $redirect = $this->generateUrl('user_dashboard', array("id" => $user->getId()));        
 
         return $this->redirect($redirect);
     }
