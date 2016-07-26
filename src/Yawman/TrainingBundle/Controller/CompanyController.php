@@ -463,9 +463,6 @@ class CompanyController extends Controller {
             }
         }
 
-        $user->setCompany(null);
-        $em->persist($user);
-
         foreach ($company->getLessonPlans() as $lessonPlan) {
             $em->getRepository('YawmanTrainingBundle:UserLessonPlan')->removeAllUserLessonByUserAndLessonPlan($user, $lessonPlan);
         }

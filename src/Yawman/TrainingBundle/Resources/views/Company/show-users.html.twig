@@ -20,7 +20,6 @@
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th>Unfinished Lessons</th>
                         <th>Role</th>
                         <th>Actions</th>
                     </tr>
@@ -29,7 +28,6 @@
                     {% for user in entity.users %}
                         <tr>
                             <td><a href="{{ path('user_show', { 'id': user.id }) }}">{{ user.username }}</a></td>
-                            <td>{% render url('user_show_remaining_lessons', {'id': user.id}) %}</td>
                             <td>
                                 {% for group in user.groups %}
                                     {{ group.name|capitalize }}
@@ -44,9 +42,10 @@
                                 <br />
                                 <a href="{{ path("company_remove_user", {"companyId": entity.id, "userId": user.id, "redirect": path('dashboard') }) }}"><i class="icon-minus"></i> Remove</a>
                                 <br />
-                                {% render url('user_promote_demote', {'id': user.id, 'companyId': entity.id}) %}
-                                <br />
                                 <a href="{{ path("company_reset_user_lessons", {"companyId": entity.id, "userId": user.id }) }}"><i class="icon-refresh"></i> Reset Lessons</a>
+                                <br />
+                                {% render url('user_promote_demote', {'id': user.id, 'companyId': entity.id}) %}
+                                
                             </td>
                         </tr>
                     {% endfor %}

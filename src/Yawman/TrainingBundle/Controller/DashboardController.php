@@ -86,8 +86,13 @@ class DashboardController extends Controller {
         }
         
         $customViewFinder = $this->get('custom_view_finder');
+        $companyId = -1;
         
-        $companyId = $user->getCompany()->getId();
+        $company = $user->getCompany();
+        
+        if($company) {
+           $companyId = $company->getId(); 
+        }
         
         $view = $customViewFinder->retrieveView('user-dashboard-'.$companyId, 'YawmanTrainingBundle:Dashboard:user-dashboard.html.twig');
         
